@@ -165,8 +165,19 @@ public class SaveImage {
     chooser.setFileFilter(filter);
     int returnVal = chooser.showSaveDialog(c);
     boolean status = false;
-    if(returnVal == JFileChooser.APPROVE_OPTION) {
-      final File file = chooser.getSelectedFile();
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file1 = chooser.getSelectedFile();
+            //Added this below code to add correct Extension to the file as selected by the user
+            String name = file1.getAbsolutePath();
+            String selected = bg.getSelection().getActionCommand();
+            if(name.lastIndexOf(".") > 0){
+                if(!(name.substring(name.lastIndexOf("."), name.length()).equalsIgnoreCase("."+selected))){
+                    name = name + "."+selected; 
+                }
+            }
+            else
+                name = name + "."+selected;
+            final File file = new File(name);
       int iw = w;
       int ih = h;
       try {
