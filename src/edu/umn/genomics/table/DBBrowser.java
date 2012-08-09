@@ -845,12 +845,13 @@ System.err.println("<<< setIndexInfo");
         public void valueChanged(ListSelectionEvent e) {
           setTables((Object[])(catalogList.getSelectedValues()),null);
           colModel.setRowCount(0);
+          if(tableList.getSelectedValues().length > 0){
           setPrimaryKeyInfo(tableList.getSelectedValues());
           setForeignKeyInfo(tableList.getSelectedValues());
           setExportedKeyInfo(tableList.getSelectedValues());
         }
       }
-    );
+    });
 
     // Schemas
     schemaModel = new DefaultListModel();
