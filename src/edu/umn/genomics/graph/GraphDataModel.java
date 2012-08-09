@@ -28,6 +28,7 @@ package edu.umn.genomics.graph;
 import java.lang.reflect.*;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
+import edu.umn.genomics.table.ExceptionHandler;
 /**
  * GraphDataModel attempts to convert any array into an array of double 
  * values that can be positioned by the axes of the graph.
@@ -222,7 +223,7 @@ public class GraphDataModel extends AbstractDataModel {
                 "or a primitive number type.");
       }
     } catch (Exception ex) {
-      System.err.println("GraphDataModel.setData " + ex);
+      ExceptionHandler.popupException(""+ex);
     }
     return ds;
   }

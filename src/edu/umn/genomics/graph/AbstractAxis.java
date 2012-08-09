@@ -21,11 +21,9 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.graph;
 
-import java.util.*;
+import edu.umn.genomics.table.ExceptionHandler;
 import javax.swing.event.EventListenerList;
 /*
  * Still need to consider:
@@ -41,16 +39,16 @@ import javax.swing.event.EventListenerList;
  * @since        AV1.0
  */
 public class AbstractAxis implements Axis, Cloneable {
+
   protected EventListenerList listenerList = new EventListenerList();
   protected int size = 0;
   protected double defaultMin = -10.;
   protected double defaultMax = 10.;
   protected double min = defaultMin;
   protected double max = defaultMax;
-  
   protected double tickIncrement = Double.NaN;
-  protected double ticks[] = null;
-  protected double values[] = null;
+    double ticks[] = null;
+    double values[] = null;
   int outOfRangeFactor = 5;
 
   /** 
@@ -102,7 +100,8 @@ public class AbstractAxis implements Axis, Cloneable {
       axis = (AbstractAxis)super.clone();
       axis.values = null;
       axis.ticks = null;
-    } catch ( CloneNotSupportedException nsex) {
+        } catch (CloneNotSupportedException nsex) {
+            ExceptionHandler.popupException(""+nsex);
     }
     return axis;
   }
@@ -205,16 +204,17 @@ public class AbstractAxis implements Axis, Cloneable {
 
   /** 
    * Return whether the given Axis has the same min, max, and size values.
+     *
    * @param obj the Axis to compare
-   * @return true if the given object is an Axis with the same  
-   * min, max, and size values.
+     * @return true if the given object is an Axis with the same min, max, and
+     * size values.
    */
   public boolean equals(Object obj) {
     if (obj != null && obj.getClass() == this.getClass()) {
-      Axis a = (Axis)obj;
-      if (a.getSize() == getSize() && 
-          a.getMin() == getMin() && 
-          a.getMax() == getMax()) {
+            Axis a = (Axis) obj;
+            if (a.getSize() == getSize()
+                    && a.getMin() == getMin()
+                    && a.getMax() == getMax()) {
         return true;
       }
     }
@@ -227,10 +227,12 @@ public class AbstractAxis implements Axis, Cloneable {
    * @return  tick marks along the axis.
    */
   public double[] getTicks() {
-    if(ticks == null)
+        if (ticks == null) {
       setTicks();
-    return(ticks);
   }
+        return (ticks);
+    }
+
   /**
    *  Place tickmarks along the axis at thee given increment.
    *  @param tickIncrement The increment at which to place the ticks.
@@ -239,6 +241,7 @@ public class AbstractAxis implements Axis, Cloneable {
     this.tickIncrement = tickIncrement;
     ticks = null;
   }
+
   public double getTickIncrement() {
     return tickIncrement;
   }
@@ -249,9 +252,9 @@ public class AbstractAxis implements Axis, Cloneable {
    */
   public void setTicks(double[] tickValues) {
     ticks = new double[2 * tickValues.length];
-    for (int i = 0, j = 0; i < tickValues.length; i++,j+=2) {
+        for (int i = 0, j = 0; i < tickValues.length; i++, j += 2) {
       ticks[j] = getPosition(tickValues[i]);
-      ticks[j+1] = tickValues[i];
+            ticks[j + 1] = tickValues[i];
     } 
   }
 
@@ -320,8 +323,8 @@ public class AbstractAxis implements Axis, Cloneable {
       smin = Math.ceil(min * scale);
       smax = Math.floor(max * scale) / scale + .2 * incr;
       sval = smin / scale;
-      while ( sval <= smax ) {
-        count+=2;
+            while (sval <= smax) {
+                count += 2;
         sval += incr;
       }
     } else {

@@ -27,6 +27,7 @@ package edu.umn.genomics.graph;
 
 import java.awt.*;
 import java.awt.geom.*;
+import edu.umn.genomics.table.ExceptionHandler;
 
 /**
  * An item to be drawn. 
@@ -65,7 +66,7 @@ public class DrawableShape implements Drawable {
       g2.draw(shape);
       g2.translate(-x,-y);
     } catch (Exception ex) {
-      ex.printStackTrace();
+      ExceptionHandler.popupException(""+ex);
     }
   }
   public String toString() {

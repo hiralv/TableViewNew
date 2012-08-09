@@ -29,6 +29,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
+import edu.umn.genomics.table.ExceptionHandler;
 /**
  * LineDataModel presents LineFormula lines as line segments within 
  * the graph area.  
@@ -126,6 +127,7 @@ public class LineDataModel implements DataModel {
         pnts[1][j+1] = yb - axes[1].getIntPosition(line.getY(axes[0].getValue(x+w)));
 System.err.println("line:"+pnts[0][j]+","+pnts[1][j]+" "+pnts[0][j+1]+","+pnts[1][j+1]);
       } catch (ClassCastException ccex) {
+          ExceptionHandler.popupException(""+ccex);
       }
     }
     return pnts;

@@ -21,8 +21,6 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.graph;
 
 import java.awt.*;
