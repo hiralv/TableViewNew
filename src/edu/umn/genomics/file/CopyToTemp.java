@@ -25,6 +25,7 @@
 
 package edu.umn.genomics.file;
 
+import edu.umn.genomics.table.ExceptionHandler;
 import java.io.*;
 import java.net.*;
 
@@ -55,8 +56,10 @@ public class CopyToTemp {
         InputStream is = url.openStream();
         return is;
       } catch (Exception se) {
+          ExceptionHandler.popupException(""+se);
       }
     }  catch (Exception ue) {
+        ExceptionHandler.popupException(""+ue);
     }
     // local file?
     try {
@@ -84,7 +87,7 @@ public class CopyToTemp {
             return is;
           }
         } catch (Exception rte) {
-          System.err.println(rte);
+          ExceptionHandler.popupException(""+rte);
         }
       }
       throw e;
@@ -150,7 +153,7 @@ public class CopyToTemp {
         String tmpName = copyToTempFile(args[i]);
         System.out.println("Temporary File:  " + tmpName);
       } catch (Exception ex) {
-        System.err.println("Error copying " + args[i] + "\t" + ex);
+        ExceptionHandler.popupException("Error copying " + args[i] + "\t" + ex);
       }  
     }
   }

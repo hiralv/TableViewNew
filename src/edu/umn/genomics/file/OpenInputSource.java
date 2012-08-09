@@ -21,13 +21,11 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.file;
 
+import edu.umn.genomics.table.ExceptionHandler;
 import java.io.*;
-import java.net.*;
-
+import java.net.URL;
 
 /**
  * OpenInputSource provides methods to open a named source 
@@ -38,8 +36,10 @@ import java.net.*;
  * @since        1.0
  */
 public class OpenInputSource {
+
   /**
    * Open the given URL or file pathname for reading.
+     *
    * @param source the URL or pathname to open.
    * @return an input stream opened on the source.
    */
@@ -51,8 +51,10 @@ public class OpenInputSource {
         InputStream is = url.openStream();
         return is;
       } catch (Exception se) {
+                ExceptionHandler.popupException(""+se);                
       }
-    }  catch (Exception ue) {
+        } catch (Exception ue) {
+            ExceptionHandler.popupException(""+ue);
     }
     // local file?
     try {
@@ -80,7 +82,7 @@ public class OpenInputSource {
             return is;
           }
         } catch (Exception rte) {
-          System.err.println(rte);
+                    ExceptionHandler.popupException(""+rte);
         }
       }
       throw e;

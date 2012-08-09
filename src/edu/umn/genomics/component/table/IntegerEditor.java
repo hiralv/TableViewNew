@@ -25,6 +25,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
+import edu.umn.genomics.table.ExceptionHandler;
 
 /**
  * Implements a cell editor that uses a formatted text field
@@ -70,7 +71,9 @@ public class IntegerEditor extends DefaultCellEditor {
                 } else try {              //The text is valid,
                     ftf.commitEdit();     //so use it.
                     ftf.postActionEvent(); //stop editing
-                } catch (java.text.ParseException exc) { }
+                } catch (java.text.ParseException exc) {
+                    ExceptionHandler.popupException(""+exc);
+                }
             }
         });
     }
@@ -101,7 +104,7 @@ public class IntegerEditor extends DefaultCellEditor {
             try {
                 return integerFormat.parseObject(o.toString());
             } catch (ParseException exc) {
-                System.err.println("getCellEditorValue: can't parse o: " + o);
+                ExceptionHandler.popupException(""+exc);
                 return null;
             }
         }
@@ -117,7 +120,9 @@ public class IntegerEditor extends DefaultCellEditor {
         if (ftf.isEditValid()) {
             try {
                 ftf.commitEdit();
-            } catch (java.text.ParseException exc) { }
+            } catch (java.text.ParseException exc) {
+            ExceptionHandler.popupException(""+exc);
+            }
 	    
         } else { //text is invalid
             if (!userSaysRevert()) { //user wants to edit

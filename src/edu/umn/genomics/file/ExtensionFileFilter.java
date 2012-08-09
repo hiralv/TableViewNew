@@ -21,14 +21,11 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.file;
 
 import java.io.File;
 import java.util.*;
 import javax.swing.filechooser.FileFilter;
-
 
 /**
  * Filter files based on filename extensions.
