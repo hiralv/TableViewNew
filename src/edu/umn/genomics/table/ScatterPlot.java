@@ -53,9 +53,9 @@ public class ScatterPlot extends JPanel
   LineFormula rline = null;
   Insets margin = new Insets(40,80,40,10);
   Drawable defaultDrawable = new DrawableT();
-  Drawable selectDrawable =  new DrawableX(2);
+  Drawable selectDrawable =  new DrawableSquare(2);
   Color defaultColor = Color.blue;
-  Color selectColor = Color.cyan;
+  Color selectColor = Color.red;
   Color dataAreaColor = new Color(220,220,220); //Color.white;
   Color axisColor = Color.gray;
   Color gridColor = Color.lightGray;
