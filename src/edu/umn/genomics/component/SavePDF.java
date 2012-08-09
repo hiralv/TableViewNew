@@ -95,8 +95,14 @@ public class SavePDF {
     // chooser.setFileFilter(filter);
     int returnVal = chooser.showSaveDialog(c);
     boolean status = false;
-    if(returnVal == JFileChooser.APPROVE_OPTION) {
-      final File file = chooser.getSelectedFile();
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            //Added the below code to add th .pdf extension if it is not provided by the user
+            String name = file.getAbsolutePath();
+            if(!(name.substring(name.length()-4 , name.length()).equalsIgnoreCase(".pdf"))){
+                name = name.concat(".pdf");
+                file = new File(name);
+            }
       int iw = w;
       int ih = h;
       try {
