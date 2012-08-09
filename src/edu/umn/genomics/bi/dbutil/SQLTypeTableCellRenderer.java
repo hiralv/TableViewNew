@@ -24,11 +24,8 @@
 
 package edu.umn.genomics.bi.dbutil;
 
-import java.sql.Types;
-import java.util.*;
-import java.lang.reflect.*;
-import java.awt.*;
-import javax.swing.table.*;
+import edu.umn.genomics.table.ExceptionHandler;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * Displays the java.sql.Types name for a java.sql.Types value.
@@ -37,7 +34,9 @@ import javax.swing.table.*;
  * @since        1.0
  */
 public class SQLTypeTableCellRenderer extends DefaultTableCellRenderer {
+
   static SQLTypeNames sqlTypeName = SQLTypeNames.getSharedInstance();
+
   /**
    * Overrides the setValue method method to display the java.sql.Types field 
    * name for the value argument.
@@ -46,7 +45,7 @@ public class SQLTypeTableCellRenderer extends DefaultTableCellRenderer {
     try {
       String s = null;
       if (value != null && value instanceof Number) {
-        s = sqlTypeName.get(((Number)value).intValue());
+                s = sqlTypeName.get(((Number) value).intValue());
       }
       if (s != null) {
         super.setValue(s);
@@ -54,7 +53,7 @@ public class SQLTypeTableCellRenderer extends DefaultTableCellRenderer {
         super.setValue(value);
       }
     } catch (Exception ex) {
-      System.err.println(this + " :  " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
   }
 }

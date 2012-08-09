@@ -21,25 +21,26 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.bi.dbutil;
 
-import java.sql.Types;
-import java.util.*;
-import java.lang.reflect.*;
+import edu.umn.genomics.table.ExceptionHandler;
+import java.lang.reflect.Field;
+import java.util.Hashtable;
 
 /**
- * A Hashtable to retrieve a java.sql.Types name from the 
- * value of that java.sql.Types static field.
- * The names are determined by using reflection on the 
- * fields of the java.sql.Types class.
- * @author       J Johnson
- * @version $Revision: 1.1 $ $Date: 2003/07/28 16:36:21 $  $Name: TableView1_2 $ 
- * @since        1.0
+ * A Hashtable to retrieve a java.sql.Types name from the value of that
+ * java.sql.Types static field. The names are determined by using reflection on
+ * the fields of the java.sql.Types class.
+ *
+ * @author J Johnson
+ * @version $Revision: 1.1 $ $Date: 2003/07/28 16:36:21 $ $Name: TableView1_3_2
+ * $
+ * @since 1.0
  */
 public class SQLTypeNames extends Hashtable {
+
   static SQLTypeNames sharedInstance = new SQLTypeNames();
+
   /** 
    * Construct a Hashtable of java.sql.Types field names 
    * using the value as the key and the field name as the value.
@@ -51,7 +52,7 @@ public class SQLTypeNames extends Hashtable {
         super.put(fld[i].get(null),fld[i].getName());
       }
     } catch (Exception ex) {
-      System.err.println("sqlTypeName " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
   }
   /** 

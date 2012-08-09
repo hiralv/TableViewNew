@@ -21,14 +21,16 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.bi.dbutil;
-import java.awt.*;
-import java.sql.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.table.*;
+
+import edu.umn.genomics.table.ExceptionHandler;
+import java.awt.BorderLayout;
+import java.sql.DatabaseMetaData;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
 
 /**
  * Displays information about a database using DatabaseMetaData returned from a connection.
@@ -36,7 +38,8 @@ import javax.swing.table.*;
  * @version $Revision: 1.1 $ $Date: 2003/07/28 16:36:19 $  $Name: TableView1_2 $
  * @since        1.0
  */
-public class  DBInfoPanel extends JPanel {
+public class DBInfoPanel extends JPanel {
+
   JTabbedPane tabP;
 
   /**
@@ -50,6 +53,7 @@ public class  DBInfoPanel extends JPanel {
 
   /**
    * Construct a display panel for database metadata information.
+     *
    * @param dbmd the metadata source for the display.
    */
   public DBInfoPanel(DatabaseMetaData dbmd) {
@@ -59,12 +63,14 @@ public class  DBInfoPanel extends JPanel {
 
   /**
    * Display database information from this database metadata source.
+     *
    * @param dbmd the metadata source for the display.
    */
   public void setMetaData(DatabaseMetaData dbmd) {
     tabP.removeAll();
-    if (dbmd == null) 
+        if (dbmd == null) {
       return;
+        }
     JTable jt;
 
     jt = new JTable(AboutDB.getVersions(dbmd));
@@ -106,7 +112,7 @@ public class  DBInfoPanel extends JPanel {
     try {
     TableModel tm = AboutDB.getTableModel(dbmd.getTypeInfo());
     if (tm instanceof ResultTableModel) {
-      ((ResultTableModel)tm).allowEditing(false);
+                ((ResultTableModel) tm).allowEditing(false);
     }
     jt = new JTable(tm);
     jt.getColumnModel().getColumn(1).setCellRenderer(new SQLTypeTableCellRenderer());
@@ -115,6 +121,7 @@ public class  DBInfoPanel extends JPanel {
                 new JScrollPane(jt),
                 "Database Supported SQL Type Information");
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
   }
 }

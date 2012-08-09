@@ -21,13 +21,18 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.bi.dbutil;
-import  java.util.prefs.*;
-import  java.io.*;
-import  java.net.*;
-import  edu.umn.genomics.file.OpenInputSource;
+
+import edu.umn.genomics.file.OpenInputSource;
+import edu.umn.genomics.table.ExceptionHandler;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.InvalidPreferencesFormatException;
+import java.util.prefs.Preferences;
+
 /**
  * Maintain database account preference data.
  * @author       J Johnson
@@ -36,6 +41,7 @@ import  edu.umn.genomics.file.OpenInputSource;
  * @see java.util.prefs.Preferences
  */
 public class DBPreferences {
+
   private static final String NAME = "name";
   private static final String USER = "user";
   private static final String PASSWD = "passwd";
@@ -44,6 +50,7 @@ public class DBPreferences {
 
   /**
    * Return Database account preferences.
+     *
    * @return an array of Database account connection parameters.
    */
   public static DBConnectParams[] getDBAccounts() {
@@ -63,7 +70,7 @@ public class DBPreferences {
         dbpa[i] = new DBUser(name, user, passwd, url, driver); 
       }
     } catch (Exception ex) {
-      System.err.println(" DBPreferences " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
     return dbpa;
   }
@@ -82,14 +89,14 @@ public class DBPreferences {
         return new DBUser(name, user, passwd, url, driver);
       }
     } catch (Exception ex) {
-      System.err.println(" DBPreferences " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
     return null;
   }
   
-
   /**
    * Save the Database account connection parameters in the user preferences.
+     *
    * @param dbconnections an array of Database account connection parameters.
    */
   public static void saveDBAccounts(DBConnectParams[] dbconnections) {
@@ -133,7 +140,7 @@ public class DBPreferences {
         prefs.node(name).removeNode();
       }
     } catch (Exception ex) {
-      System.err.println(" DBPreferences " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
   }
 

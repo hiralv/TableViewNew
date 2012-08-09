@@ -21,13 +21,12 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.bi.dbutil;
+
+import edu.umn.genomics.table.ExceptionHandler;
 import java.sql.*;
 import java.util.*;
 import java.lang.reflect.*;
-
 
 /**
  * DatabaseMetaData information for a Table.
@@ -49,6 +48,7 @@ import java.lang.reflect.*;
  * @see java.sql.DatabaseMetaData#getColumns(String, String, String, String)
  */
 public class DBTable implements Comparable {
+
   String catalog;
   String schema;
   String table;
@@ -64,6 +64,7 @@ public class DBTable implements Comparable {
 
   /**
    * Construct a table reference from the arguments.
+     *
    * @param catalog the database catalog this table is in, (may be null).
    * @param schema the database schema this table is in, (may be null).
    * @param table the database name of this table.
@@ -76,6 +77,7 @@ public class DBTable implements Comparable {
 
   /**
    * Construct a table reference from the arguments.
+     *
    * @param dbmd the database meta data to query for tables.
    * @param catalog the name pattern for the catalog (may be null).
    * @param schema the name pattern for the schema (may be null).
@@ -89,10 +91,10 @@ public class DBTable implements Comparable {
   public static List getDBTables(DatabaseMetaData dbmd, String catalog, String schema, String table, String[] types) 
     throws NullPointerException, SQLException {
     if (dbmd == null) {
-      throw new NullPointerException("DBColumn.getDBColumn(DatabaseMetaData, DBTable) DatabaseMetaData can't be null" );
+            throw new NullPointerException("DBColumn.getDBColumn(DatabaseMetaData, DBTable) DatabaseMetaData can't be null");
     }
     ResultSet rs = dbmd.getTables(catalog, schema, table, types);
-    TreeSet tableList = new TreeSet();
+        Vector tableList = new Vector();
     if (rs != null) {
       while (rs.next()) {
         DBTable dbTable = getDBTable(dbmd, rs);
@@ -102,64 +104,70 @@ public class DBTable implements Comparable {
       }
       rs.close();
     }
-    return new Vector(tableList);
+        return tableList;
   }
 
   /**
    * Return a DBTable instance for the current row in the ResultSet returned from
    * {@link java.sql.DatabaseMetaData#getTables(String, String, String, String[])}.
    * This is typically called by {@link #getDBTables(DatabaseMetaData, String, String, String, String[])}.
+     *
    * @param rs the ResultSet of table information.
    * @return a DBTable instance for this row in the ResultSet.
    * @throws SQLException from retrieving table data from the ResultSet
    */
-  public static DBTable getDBTable(DatabaseMetaData dbmd,  ResultSet rs) throws SQLException {
+    public static DBTable getDBTable(DatabaseMetaData dbmd, ResultSet rs) throws SQLException {
     int cnt = rs.getMetaData().getColumnCount();
     DBTable dbTable = new DBTable(rs.getString(1), rs.getString(2), rs.getString(3));
     try {
-      if (cnt >= 4) 
+            if (cnt >= 4) {
         dbTable.table_type = rs.getString(4);
+            }
     } catch (SQLException ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     try {
       if (cnt >= 5) 
         dbTable.remarks = rs.getString(5);
     } catch (SQLException ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     try {
       if (cnt >= 6) 
         dbTable.type_cat = rs.getString(6);
     } catch (SQLException ex) {
+            ExceptionHandler.popupException(""+ex);
     }
      
     try {
       if (cnt >= 7) 
         dbTable.type_schem = rs.getString(7);
     } catch (SQLException ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     try {
       if (cnt >= 8) 
         dbTable.type_name = rs.getString(8);
     } catch (SQLException ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     try {
       if (cnt >= 9) 
         dbTable.self_ref_col = rs.getString(9);
     } catch (SQLException ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     try {
       if (cnt >= 10) 
         dbTable.ref_gen = rs.getString(10);
     } catch (SQLException ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     Vector colList = new Vector(DBColumn.getDBColumn(dbmd,dbTable));
     if (colList != null && colList.size() > 0) {
       dbTable.columns = new DBColumn[colList.size()];
       dbTable.columns = (DBColumn[])colList.toArray(dbTable.columns);
     }
-    // Primary Keys
-    // Imported Keys
-    // Exported Keys
     // dbTable.getRowCount(dbmd.getConnection());
     return dbTable;
   }
@@ -249,12 +257,12 @@ public class DBTable implements Comparable {
     int count = -1;
     Statement stmt = null;
     ResultSet rs = null;
-System.err.println(sql );
+        System.err.println(sql);
     try {
       stmt = conn.createStatement();
       rs = stmt.executeQuery(sql);
     } catch (Exception e) {
-      System.err.println(e);
+            ExceptionHandler.popupException(""+e);
     }
     if (rs != null) {
       try {
@@ -262,12 +270,12 @@ System.err.println(sql );
           count = rs.getInt(1);
         }
       } catch (Exception e) {
-        System.err.println(e);
+                ExceptionHandler.popupException(""+e);
       }
       try {
         stmt.close();
       } catch (Exception e) {
-        System.err.println(e);
+                ExceptionHandler.popupException(""+e);
       }
     }
 System.err.println(sql + " rows = " + count);
@@ -282,16 +290,14 @@ System.err.println(sql + " rows = " + count);
   public TableModel getIndexInfo() {
   }
  */
-
-
   public String getQualifiedName() {
-    return (catalog != null ? catalog + "." : "") + 
-           (schema != null ? schema + "." : "") + table;
+        return (catalog != null ? catalog + "." : "")
+                + (schema != null ? schema + "." : "") + table;
   }
 
   public boolean equals(Object obj) {
     if (obj != null && obj instanceof DBTable) {
-      return this.getQualifiedName().equals(((DBTable)obj).getQualifiedName());
+            return this.getQualifiedName().equals(((DBTable) obj).getQualifiedName());
     }
     return false;
   }
@@ -299,8 +305,8 @@ System.err.println(sql + " rows = " + count);
   public int compareTo(Object obj) {
     if (obj == null) {
       throw new NullPointerException("Can only compare DBTable to another DBTable.");
-    }  else if( obj instanceof DBTable) {
-      return this.getQualifiedName().compareTo(((DBTable)obj).getQualifiedName());
+        } else if (obj instanceof DBTable) {
+            return this.getQualifiedName().compareTo(((DBTable) obj).getQualifiedName());
     }
     throw new ClassCastException("Can only compare DBTable to another DBTable.");
   }

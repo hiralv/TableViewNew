@@ -21,11 +21,10 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.bi.dbutil;
-import java.lang.*;
+
 import java.io.Serializable;
+
 /**
  * Holds the parameters required for making a JDBC connection to a database.
  * @author       J Johnson

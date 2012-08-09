@@ -21,11 +21,14 @@
  * GNU General Public License for more details.
  *
  */
-
 package edu.umn.genomics.bi.dbutil;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * DatabaseMetaData information about a database table column.
@@ -35,8 +38,9 @@ import java.util.*;
  * @see java.sql.DatabaseMetaData#getColumns(String, String, String, String)
  */
 public class DBColumn {
+
   Hashtable catalogueHash;  // name -> Catalogue
-  DBTable  table; 	// TABLE_CAT TABLE_SCHEM TABLE_NAME
+    DBTable table; 	// TABLE_CAT TABLE_SCHEM TABLE_NAME
   String name;  	// COLUMN_NAME
   short dataType;	// DATA_TYPE
   String typeName;	// TYPE_NAME
@@ -55,6 +59,7 @@ public class DBColumn {
 
   /**
    * Return a list of DBColumn instances for the given table.
+     *
    * @param dbmd the meta data for the database.
    * @param table the table for which to retrive column information.
    * @return a list of DBColumn instances for the given table.
@@ -64,10 +69,10 @@ public class DBColumn {
   public static List getDBColumn(DatabaseMetaData dbmd, DBTable table) 
     throws NullPointerException, SQLException {
     if (table == null) {
-      throw new NullPointerException("DBColumn.getDBColumn(DatabaseMetaData, DBTable) DBTable can't be null" );
+            throw new NullPointerException("DBColumn.getDBColumn(DatabaseMetaData, DBTable) DBTable can't be null");
     }
     if (dbmd == null) {
-      throw new NullPointerException("DBColumn.getDBColumn(DatabaseMetaData, DBTable) DatabaseMetaData can't be null" );
+            throw new NullPointerException("DBColumn.getDBColumn(DatabaseMetaData, DBTable) DatabaseMetaData can't be null");
     }
     ResultSet rs = dbmd.getColumns(table.getCatalogName(), table.getSchemaName(), table.getTableName(), null);
     Vector colList = new Vector();
@@ -124,6 +129,7 @@ public class DBColumn {
 
   /** 
    * Return this column's name in the table.
+     *
    * @return this column's name.
    */
   public String getColumnName() {
@@ -134,7 +140,7 @@ public class DBColumn {
    * Return the SQL type from java.sql.Types for this column. 
    *  @return the SQL type from java.sql.Types
    */
-  public short getDataType () {
+    public short getDataType() {
     return dataType;
   }
 
@@ -152,7 +158,7 @@ public class DBColumn {
    * for numeric or decimal types this is precision.         
    * @return the column size.
    */
-  public int getColumnSize () {
+    public int getColumnSize() {
     return columnSize;
   }
 
@@ -163,20 +169,21 @@ public class DBColumn {
   //public int getBufferLength () {
   //  return bufferLength;
   //}
-
   /**
    * Return the number of fractional digits.  
+     *
    * @return the number of fractional digits.
    */
-  public int getDecimalDigits () {
+    public int getDecimalDigits() {
     return decimalDigits;
   }
 
   /**
    * Return the Radix (typically either 10 or 2).  
+     *
    * @return the Radix.
    */
-  public int getNumPrecRadix () {
+    public int getNumPrecRadix() {
     return numPrecRadix;
   }
 
@@ -185,25 +192,28 @@ public class DBColumn {
    * columnNoNulls - might not allow NULL values       
    * columnNullable - definitely allows NULL values       
    * columnNullableUnknown - nullability unknown       
+     *
    * @return the column size.
    */
-  public int getNullable () {
+    public int getNullable() {
     return nullable;
   }
 
   /**
    * Return comment describing column.  
+     *
    * @return comment describing column.
    */
-  public String getRemarks () {
+    public String getRemarks() {
     return remarks;
   }
 
   /**
    * Return the default value, (may be null).
+     *
    * @return the default value.
    */
-  public String getColumnDef () {
+    public String getColumnDef() {
     return columnDef;
   }
 
@@ -214,7 +224,6 @@ public class DBColumn {
   //public int getSqlDataType () {
   //  return sqlDataType;
   //}
-
   // /**
   //  * Return the SQL_DATETIME_SUB.  
   //  * @return the SQL_DATETIME_SUB.
@@ -222,20 +231,21 @@ public class DBColumn {
   //public int getSqlDateTimeSub () {
   //  return sqlDateTimeSub;
   //}
-
   /**
    * Return for char types, the maximum number of bytes in the column.  
+     *
    * @return for char types, the maximum number of bytes in the column.
    */
-  public int getCharOctetLength () {
+    public int getCharOctetLength() {
     return charOctetLength;
   }
 
   /**
    * Return the index of column in table (starting at 1).  
+     *
    * @return the index of column in table (starting at 1).
    */
-  public int getOrdinalPosition () {
+    public int getOrdinalPosition() {
     return ordinalPosition;
   }
 
@@ -246,7 +256,7 @@ public class DBColumn {
    *  An empty string means nobody knows.     
    * @return whether column allows NULL values.
    */
-  public String getIsNullable () {
+    public String getIsNullable() {
     return isNullable;
   }
 
@@ -265,7 +275,6 @@ public class DBColumn {
   //public void setBufferLength(int bufferLength) {
   //  this.bufferLength = bufferLength;
   //}
-
   public void setDecimalDigits(int decimalDigits) {
     this.decimalDigits = decimalDigits;
   }
@@ -289,11 +298,9 @@ public class DBColumn {
   //public void setSqlDataType(int sqlDataType) {
   //  this.sqlDataType = sqlDataType;
   //}
-
   //public void setSqlDateTimeSub(int sqlDateTimeSub) {
   //  this.sqlDateTimeSub = sqlDateTimeSub;
   //}
-
   public void setCharOctetLength(int charOctetLength) {
     this.charOctetLength = charOctetLength;
   }
@@ -309,6 +316,7 @@ public class DBColumn {
   /** 
    * Return a name for this column that includes the catalog, schema, and 
    * table names if appropriate for this database.
+     *
    * @return the fully qualified column name 
    */
   public String getQualifiedName() {
@@ -317,7 +325,7 @@ public class DBColumn {
 
   public boolean equals(Object obj) {
     if (obj != null && obj instanceof DBColumn) {
-      return this.getQualifiedName().equals(((DBColumn)obj).getQualifiedName());
+            return this.getQualifiedName().equals(((DBColumn) obj).getQualifiedName());
     }
     return false;
   }
@@ -326,7 +334,7 @@ public class DBColumn {
     if (obj != null) {
       throw new NullPointerException("Can only compare DBColumn to another DBColumn.");
     } else if (obj instanceof DBColumn) {
-      return this.getQualifiedName().compareTo(((DBColumn)obj).getQualifiedName());
+            return this.getQualifiedName().compareTo(((DBColumn) obj).getQualifiedName());
     }
     throw new ClassCastException("Can only compare DBColumn to another DBColumn.");
   }
@@ -334,5 +342,4 @@ public class DBColumn {
   public String toString() {
     return getColumnName();
   }
-
 }

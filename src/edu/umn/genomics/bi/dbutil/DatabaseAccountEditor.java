@@ -21,17 +21,21 @@
  * GNU General Public License for more details.
  *
  */
-
 package edu.umn.genomics.bi.dbutil;
 
-import java.util.prefs.*;
-import java.io.*;
-import java.net.*;
-import java.sql.*;
+import edu.umn.genomics.table.ExceptionHandler;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 /**
  * Provides a panel in which to edit the database account user preferences.
@@ -44,6 +48,7 @@ import javax.swing.event.*;
  * @see java.sql.DriverManager
  */
 public class DatabaseAccountEditor extends JPanel {
+
     DBAccountListModel dblm;
     boolean exitOnClose = false;
     JComboBox acctChooser;
@@ -59,6 +64,7 @@ public class DatabaseAccountEditor extends JPanel {
     JButton closeBtn = new JButton("Close");
     // Listen for changes to the Selected account
     ItemListener itemListener = new ItemListener() {
+
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 String acctName = (String) e.getItem();
@@ -66,7 +72,7 @@ public class DatabaseAccountEditor extends JPanel {
                     try {
                         setFields(acctName);          
                     } catch (Exception ex) {
-                        System.err.println("Error getting preferences for " + acctName + " " + ex);
+                        ExceptionHandler.popupException(""+ex);
                     }
                 }
             }
@@ -74,13 +80,16 @@ public class DatabaseAccountEditor extends JPanel {
     };
     // Listen for changes to the account list
     ListDataListener listListener = new ListDataListener() {
+
         public void intervalAdded(ListDataEvent e) {
             setFields();
         }
+
         public void intervalRemoved(ListDataEvent e) {
             setFields();
 
         }
+
         public void contentsChanged(ListDataEvent e) {
             if (acctChooser.getSelectedIndex() == e.getIndex0()) {
                 setFields();
@@ -97,6 +106,7 @@ public class DatabaseAccountEditor extends JPanel {
 
     /**
      * Construct a database account user preferences editing panel.
+     *
      * @param dbListModel the list model that manages the user preferences.
      */
     public DatabaseAccountEditor(DBAccountListModel dbListModel) throws BackingStoreException {
@@ -112,8 +122,8 @@ public class DatabaseAccountEditor extends JPanel {
         userChooser.setEditable(true);
         passwordChooser = new JPasswordField();
 
-        JPanel labels = new JPanel(new GridLayout(0,1));
-        JPanel fields = new JPanel(new GridLayout(0,1));
+        JPanel labels = new JPanel(new GridLayout(0, 1));
+        JPanel fields = new JPanel(new GridLayout(0, 1));
         JLabel label;
 
         // Account Chooser
@@ -153,7 +163,7 @@ public class DatabaseAccountEditor extends JPanel {
         fields.add(passwordChooser);
 
         JPanel entry = new JPanel(new BorderLayout());
-        entry.add(labels,BorderLayout.WEST);
+        entry.add(labels, BorderLayout.WEST);
         entry.add(fields, BorderLayout.CENTER);
 
 
@@ -175,11 +185,11 @@ public class DatabaseAccountEditor extends JPanel {
         btn.setToolTipText("Add New Account");
         btn.addActionListener(
             new ActionListener() {
+
                 public void actionPerformed(ActionEvent e) {
                     newAccount();
                 }
-            }
-        );
+                });
         tb.add(btn);
         
         // Duplicate
@@ -192,11 +202,11 @@ public class DatabaseAccountEditor extends JPanel {
         btn.setToolTipText("Duplicate this Account");
         btn.addActionListener(
             new ActionListener() {
+
                 public void actionPerformed(ActionEvent e) {
                     duplicateAccount();
                 }
-            }
-        );
+                });
         tb.add(btn);
         tb.addSeparator();
 
@@ -210,22 +220,18 @@ public class DatabaseAccountEditor extends JPanel {
         btn.setToolTipText("Test Connection to Database Server");
         btn.addActionListener(
             new ActionListener() {
+
                 public void actionPerformed(ActionEvent e) {
                     try {
                         testConnection();
                         JOptionPane.showMessageDialog(
-                            ((JComponent)e.getSource()).getTopLevelAncestor(),
+                                    ((JComponent) e.getSource()).getTopLevelAncestor(),
                             "Able to connect");
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(
-                            ((JComponent)e.getSource()).getTopLevelAncestor(),
-                            ex,
-                            "Data base connection failed",
-                            JOptionPane.ERROR_MESSAGE);
+                            ExceptionHandler.popupException(""+ex);
                     }
                 }
-            }
-        );
+                });
         tb.add(btn);
 
         // Apply
@@ -238,11 +244,11 @@ public class DatabaseAccountEditor extends JPanel {
         btn.setToolTipText("Apply Changes to this Account");
         btn.addActionListener(
             new ActionListener() {
+
                 public void actionPerformed(ActionEvent e) {
                     applyChanges();
                 }
-            }
-        );
+                });
         tb.add(btn);
         tb.addSeparator();
 
@@ -256,11 +262,11 @@ public class DatabaseAccountEditor extends JPanel {
         btn.setToolTipText("Remove this Account");
         btn.addActionListener(
             new ActionListener() {
+
                 public void actionPerformed(ActionEvent e) {
                     removeAccount();
                 }
-            }
-        );
+                });
         tb.add(btn);
         tb.addSeparator();
 
@@ -274,11 +280,11 @@ public class DatabaseAccountEditor extends JPanel {
         btn.setToolTipText("Import Accounts");
         btn.addActionListener(
             new ActionListener() {
+
                 public void actionPerformed(ActionEvent e) {
                     importAccounts();
                 }
-            }
-        );
+                });
         tb.add(btn);
 
         // Export
@@ -291,11 +297,11 @@ public class DatabaseAccountEditor extends JPanel {
         btn.setToolTipText("Export this Account");
         btn.addActionListener(
             new ActionListener() {
+
                 public void actionPerformed(ActionEvent e) {
                     exportAccount();
                 }
-            }
-        );
+                });
         tb.add(btn);
 
         // ExportAll
@@ -308,11 +314,11 @@ public class DatabaseAccountEditor extends JPanel {
         btn.setToolTipText("Export All Accounts");
         btn.addActionListener(
             new ActionListener() {
+
                 public void actionPerformed(ActionEvent e) {
                     exportAllAccounts();
                 }
-            }
-        );
+                });
         tb.add(btn);
 
         // Apply Buttons
@@ -359,15 +365,18 @@ public class DatabaseAccountEditor extends JPanel {
 
         setLayout(new BorderLayout());
         add(entry);
-        add(tb,BorderLayout.NORTH);
+        add(tb, BorderLayout.NORTH);
         Box btnBox = new Box(BoxLayout.Y_AXIS);
         btnBox.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnBox.add(btnPanel);
-        add(btnBox,BorderLayout.SOUTH);
+        add(btnBox, BorderLayout.SOUTH);
         // start with the first account selected
         if (dblm.getSize() > 0) {
             dblm.setSelectedItem(dblm.getElementAt(0));
             setFields();
+        }else{
+            // Just set models;
+            setModels();
         }
         // add listeners
         acctChooser.addItemListener(itemListener);
@@ -379,20 +388,20 @@ public class DatabaseAccountEditor extends JPanel {
         closeBtn.setToolTipText("Close");
         closeBtn.addActionListener(
             new ActionListener() {
+
                 public void actionPerformed(ActionEvent e) {
                     cancel();
                 }
-            }
-        );
+                });
         btnPanel.add(closeBtn);
     }
 
     /**
-     *  Create a new account. 
+     * Create a new account.
      */
     private void newAccount() {
         String message = "Please enter a new accountName";
-        while(true) {
+        while (true) {
             String inputValue = JOptionPane.showInputDialog("Please enter a new accountName");
             if (inputValue == null || inputValue.length() < 1) {
                 break;
@@ -401,23 +410,19 @@ public class DatabaseAccountEditor extends JPanel {
                     setFields(inputValue);
                     break;
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(
-                            this.getTopLevelAncestor(),
-                            ex,
-                            "Creating new account failed",
-                            JOptionPane.ERROR_MESSAGE);
+                    ExceptionHandler.popupException(""+ex);
                 }
             }
         }
     }
 
     /**
-     *  Duplicate the selected account. 
+     * Duplicate the selected account.
      */
     private void duplicateAccount() {
-        String drvr = (String)driverChooser.getSelectedItem();
-        String url = (String)urlChooser.getSelectedItem();
-        String usr = (String)userChooser.getSelectedItem();
+        String drvr = (String) driverChooser.getSelectedItem();
+        String url = (String) urlChooser.getSelectedItem();
+        String usr = (String) userChooser.getSelectedItem();
         String pwd = new String(passwordChooser.getPassword());
 
         newAccount();
@@ -430,7 +435,7 @@ public class DatabaseAccountEditor extends JPanel {
     }
 
     /**
-     *  Remove the selected account. 
+     * Remove the selected account.
      */
     private void removeAccount() {
         int i = acctChooser.getSelectedIndex();
@@ -439,22 +444,18 @@ public class DatabaseAccountEditor extends JPanel {
             if (name != null && name.length() > 0) {
                 dblm.removeAccount(nameField.getText());
                 if (i > 0) {
-                    acctChooser.setSelectedIndex(i-1);
+                    acctChooser.setSelectedIndex(i - 1);
                 } else if (i < dblm.getSize()) {
                     acctChooser.setSelectedIndex(i);
                 } 
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(
-                this.getTopLevelAncestor(),
-                ex,
-                "Removing the account failed",
-                JOptionPane.ERROR_MESSAGE);
+            ExceptionHandler.popupException(""+ex);
         }
     }
 
     private void importAccounts() {
-        String[] optionNames = { "Import","Cancel" };
+        String[] optionNames = {"Import", "Cancel"};
         try {
             int choice = JOptionPane.showOptionDialog(
                  this.getTopLevelAncestor(),
@@ -462,22 +463,18 @@ public class DatabaseAccountEditor extends JPanel {
                  "Import Database User Parameters",
                  JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
                  null, optionNames, optionNames[0]);
-            switch(choice) {
+            switch (choice) {
             case 0:
                 dblm.importPreferences(importTextField.getText());
                 break;
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(
-                this.getTopLevelAncestor(),
-                ex,
-                "Importing accounts failed",
-                JOptionPane.ERROR_MESSAGE);
+            ExceptionHandler.popupException(""+ex);
         }
     }
 
     private void exportAccount() {
-        String accnt = (String)dblm.getSelectedItem();
+        String accnt = (String) dblm.getSelectedItem();
         exportAccount(accnt);
     }
 
@@ -489,15 +486,11 @@ public class DatabaseAccountEditor extends JPanel {
             int returnVal = fileChooser.showOpenDialog(this.getTopLevelAncestor());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fileChooser.getSelectedFile();
-                dblm.exportPreferences(file.getAbsolutePath(),accnt);
+                dblm.exportPreferences(file.getAbsolutePath(), accnt);
             } else {
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(
-                    this.getTopLevelAncestor(),
-                    ex,
-                    "Data base user export failed",
-                    JOptionPane.ERROR_MESSAGE);
+            ExceptionHandler.popupException(""+ex);
         }
     }
 
@@ -507,36 +500,33 @@ public class DatabaseAccountEditor extends JPanel {
 
     private void applyChanges() {
         try {
-            String name = (String)nameField.getText();
-            String drvr = (String)driverChooser.getSelectedItem();
-            String url = (String)urlChooser.getSelectedItem();
-            String usr = (String)userChooser.getSelectedItem();
+            String name = (String) nameField.getText();
+            String drvr = (String) driverChooser.getSelectedItem();
+            String url = (String) urlChooser.getSelectedItem();
+            String usr = (String) userChooser.getSelectedItem();
             String pwd = new String(passwordChooser.getPassword());
             dblm.addAccount(name);
-            dblm.setDriver(name,drvr);
-            dblm.setURL(name,url);
-            dblm.setUser(name,usr);
-            dblm.setPassword(name,pwd);
+            dblm.setDriver(name, drvr);
+            dblm.setURL(name, url);
+            dblm.setUser(name, usr);
+            dblm.setPassword(name, pwd);
             dblm.setSelectedItem(name); 
             setFields(name);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(
-                    this.getTopLevelAncestor(),
-                    ex,
-                    "Applying account changes failed",
-                    JOptionPane.ERROR_MESSAGE);
+            ExceptionHandler.popupException(""+ex);
         }
     }
 
     private boolean testConnection() throws SQLException {
-        String name = (String)nameField.getText();
-        String drvr = (String)driverChooser.getSelectedItem();
-        String url = (String)urlChooser.getSelectedItem();
-        String usr = (String)userChooser.getSelectedItem();
+        String name = (String) nameField.getText();
+        String drvr = (String) driverChooser.getSelectedItem();
+        String url = (String) urlChooser.getSelectedItem();
+        String usr = (String) userChooser.getSelectedItem();
         String pwd = new String(passwordChooser.getPassword());
         try {
             Class.forName(drvr); 
         } catch (ClassNotFoundException cnfex) {
+            ExceptionHandler.popupException(""+cnfex);
         }
         Connection tc = DriverManager.getConnection(url, usr, pwd);
         tc.close();
@@ -554,28 +544,31 @@ public class DatabaseAccountEditor extends JPanel {
         }
     }
     
-    private synchronized void setFields(String accountName) throws BackingStoreException {
-        nameField.setText(accountName);
+    private synchronized void setModels() throws BackingStoreException{
         driverChooser.setModel(new DefaultComboBoxModel(dblm.getKnownDrivers()));
-        driverChooser.setSelectedItem(dblm.getDriver(accountName)); 
         urlChooser.setModel(new DefaultComboBoxModel(dblm.getKnownURLs()));
-        urlChooser.setSelectedItem(dblm.getURL(accountName)); 
         userChooser.setModel(new DefaultComboBoxModel(dblm.getKnownUsers()));
+    }
+    
+    private synchronized void setFields(String accountName) throws BackingStoreException {
+        setModels();
+        nameField.setText(accountName);
+        //driverChooser.setModel(new DefaultComboBoxModel(dblm.getKnownDrivers()));
+        driverChooser.setSelectedItem(dblm.getDriver(accountName)); 
+        //urlChooser.setModel(new DefaultComboBoxModel(dblm.getKnownURLs()));
+        urlChooser.setSelectedItem(dblm.getURL(accountName)); 
+        //userChooser.setModel(new DefaultComboBoxModel(dblm.getKnownUsers()));
         userChooser.setSelectedItem(dblm.getUser(accountName)); 
         passwordChooser.setText(dblm.getPassword(accountName));
     }
 
     private void setFields() {
-        String acctName = (String)acctChooser.getSelectedItem();
+        String acctName = (String) acctChooser.getSelectedItem();
         if (acctName != null && acctName.length() > 0) {
             try {
             setFields(acctName);
             } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(
-                        this.getTopLevelAncestor(),
-                        ex,
-                        "Unable to retrieve account preferences",
-                        JOptionPane.ERROR_MESSAGE);
+                ExceptionHandler.popupException(""+ex);
             }
         }
     }
@@ -583,34 +576,30 @@ public class DatabaseAccountEditor extends JPanel {
     private JPanel getImportPanel() {
         if (importPanel == null) {
             importPanel = new JPanel();
-            importPanel.setLayout(new BoxLayout(importPanel,BoxLayout.X_AXIS));
+            importPanel.setLayout(new BoxLayout(importPanel, BoxLayout.X_AXIS));
             JLabel label = new JLabel("File or URL:");
             importTextField = new JTextField(40);
             JButton fcBtn = new JButton("Browse");
             fcBtn.setToolTipText("Browse files for preferences");
             fcBtn.addActionListener(
                     new ActionListener() {
+
                         public void actionPerformed(ActionEvent e) {
                             try {
                                 if (fileChooser == null) {
                                     fileChooser = new JFileChooser();
                                 }
-                                int returnVal = fileChooser.showOpenDialog(((JComponent)e.getSource()).getTopLevelAncestor());
+                                int returnVal = fileChooser.showOpenDialog(((JComponent) e.getSource()).getTopLevelAncestor());
                                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                                     File file = fileChooser.getSelectedFile();
                                     importTextField.setText(file.getAbsolutePath());
                                 } else {
                                 }
                             } catch (Exception ex) {
-                                JOptionPane.showMessageDialog(
-                                        ((JComponent)e.getSource()).getTopLevelAncestor(),
-                                        ex,
-                                        "Data base user import failed",
-                                        JOptionPane.ERROR_MESSAGE);
+                                ExceptionHandler.popupException(""+ex);
                                 }
                         }
-                    }
-                );
+                    });
             importPanel.add(label);
             importPanel.add(importTextField);
             importPanel.add(fcBtn);
@@ -620,6 +609,7 @@ public class DatabaseAccountEditor extends JPanel {
 
     /**
      * Import accounts from the preferences urls given.
+     *
      * @param args urls from which to import account preference information
      */
     public void importAccounts(String[] args) {
@@ -628,7 +618,7 @@ public class DatabaseAccountEditor extends JPanel {
                 try {
                     dblm.importPreferences(args[i]);
                 } catch (Exception ex) {
-                    System.err.println("Error importing Database Account preferences: " + ex);
+                    ExceptionHandler.popupException(""+ex);
                 }
             }
         }
@@ -636,13 +626,14 @@ public class DatabaseAccountEditor extends JPanel {
 
     /**
      * Display the DatabaseAccountEditor as a popup Dialog.
+     *
      * @param parentComponent the parent for this entry form panel.
      */
     public void show(Component parentComponent) {
-        Component parent = (Component)(parentComponent != null 
+        Component parent = (Component) (parentComponent != null
                                        ? parentComponent : getTopLevelAncestor());
-        String[] optionNames = { "Close" };
-        String   connectTitle = "Edit Database Account Preferences";
+        String[] optionNames = {"Close"};
+        String connectTitle = "Edit Database Account Preferences";
         this.validate();
         int choice = JOptionPane.showOptionDialog(parent, this,
                          connectTitle,
@@ -650,17 +641,19 @@ public class DatabaseAccountEditor extends JPanel {
                          null, optionNames, optionNames[0]);
     }
 
-
-
     /**
      * Open a frame with database user account connection parameters.
+     *
      * @param args urls from which to import account preference information
      */
     public static void main(String[] args) {
         DatabaseAccountEditor dbacct = null;
         JFrame frame = new JFrame("Edit Database Account Preferences");
         frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {System.exit(0);}
+
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
         });
         try {
             dbacct = new DatabaseAccountEditor();
@@ -668,7 +661,7 @@ public class DatabaseAccountEditor extends JPanel {
             dbacct.exitOnClose = true;
             dbacct.importAccounts(args);
         } catch (Exception ex) {
-            System.err.println("DatabaseAccountEditor " + ex);
+            ExceptionHandler.popupException(""+ex);
         }
         frame.getContentPane().add(dbacct);
         frame.pack();

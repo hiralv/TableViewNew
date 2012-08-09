@@ -24,10 +24,18 @@
 
 
 package edu.umn.genomics.bi.dbutil;
-import java.sql.*;
-import java.util.*;
-import java.lang.reflect.*;
-import javax.swing.table.*;
+
+import edu.umn.genomics.table.ExceptionHandler;
+import java.lang.reflect.Method;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /**
  * Return information about a database using DatabaseMetaData returned from a connection.
@@ -37,6 +45,7 @@ import javax.swing.table.*;
  * @see java.sql.DatabaseMetaData
  */
 public class AboutDB {
+
   /**
    * Return as a TableModel the method names and the values they return 
    * for methods about Database and JDBC Driver versions.
@@ -50,28 +59,30 @@ public class AboutDB {
     Vector rows = new Vector();
     Vector cols;
     Method[] m = dbmd.getClass().getMethods(); // introspect on DataBaseMetaData methods
-    for(int i = 0; i < m.length; i++) {
+        for (int i = 0; i < m.length; i++) {
      try {
-      if (m[i].getName().startsWith("getDatabase") &&
-          m[i].getParameterTypes().length == 0) {
+                if (m[i].getName().startsWith("getDatabase")
+                        && m[i].getParameterTypes().length == 0) {
         cols = new Vector(2);
         cols.add(m[i].getName());
-        cols.add(m[i].invoke(dbmd,(Object[])null));
+                    cols.add(m[i].invoke(dbmd, null));
         rows.add(cols);
       }
      } catch (Throwable ex) {
+                ExceptionHandler.popupException(""+ex);
      }
     }
-    for(int i = 0; i < m.length; i++) {
+        for (int i = 0; i < m.length; i++) {
      try {
-      if (m[i].getName().startsWith("getDriver") &&
-          m[i].getParameterTypes().length == 0) {
+                if (m[i].getName().startsWith("getDriver")
+                        && m[i].getParameterTypes().length == 0) {
         cols = new Vector(2);
         cols.add(m[i].getName());
         cols.add(m[i].invoke(dbmd,(Object[])null));
         rows.add(cols);
       }
      } catch (Throwable ex) {
+                ExceptionHandler.popupException(""+ex);
      }
     }
     for(int i = 0; i < m.length; i++) {
@@ -84,6 +95,7 @@ public class AboutDB {
         rows.add(cols);
       }
      } catch (Throwable ex) {
+                ExceptionHandler.popupException(ex.getMessage());
      }
     }
     return new DefaultTableModel(rows, colNames);
@@ -112,6 +124,7 @@ public class AboutDB {
         rows.add(cols);
       }
      } catch (Throwable ex) {
+                ExceptionHandler.popupException(""+ex);
      }
     }
     return new DefaultTableModel(rows, colNames);
@@ -144,6 +157,7 @@ public class AboutDB {
         rows.add(cols);
       }
      } catch (Throwable ex) {
+                ExceptionHandler.popupException(""+ex);
      }
     }
     return new DefaultTableModel(rows, colNames);
@@ -176,6 +190,7 @@ public class AboutDB {
         rows.add(cols);
       }
      } catch (Throwable ex) {
+                ExceptionHandler.popupException(""+ex);
      }
     }
     return new DefaultTableModel(rows, colNames);
@@ -200,6 +215,7 @@ public class AboutDB {
         rows.add(cols);
       }
     } catch (Throwable ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     return new DefaultTableModel(rows, colNames);
   }
@@ -238,6 +254,7 @@ public class AboutDB {
         }
       }
      } catch (Throwable ex) {
+                ExceptionHandler.popupException(""+ex);
      }
     }
     return new DefaultTableModel(rows, colNames);
@@ -269,7 +286,8 @@ public class AboutDB {
                m[i].invoke(dbmd,(Object[])null) );
       }
      } catch (Exception ex) {
-        sb.append(" "  + m[i].getName() + fill.substring(0,nl- m[i].getName().length()) + "\t" + ex);
+                sb.append(" " + m[i].getName() + fill.substring(0, nl - m[i].getName().length()) + "\t" + ex);
+                ExceptionHandler.popupException(""+ex);
      }
     }
     for(int i = 0; i < m.length; i++) {
@@ -280,7 +298,8 @@ public class AboutDB {
                m[i].invoke(dbmd,(Object[])null) );
       }
      } catch (Exception ex) {
-        sb.append(" "  + m[i].getName() + fill.substring(0,nl- m[i].getName().length()) + "\t" + ex);
+                sb.append(" " + m[i].getName() + fill.substring(0, nl - m[i].getName().length()) + "\t" + ex);
+                ExceptionHandler.popupException(""+ex);
      }
     }
     for(int i = 0; i < m.length; i++) {
@@ -291,7 +310,8 @@ public class AboutDB {
                m[i].invoke(dbmd,(Object[])null) );
       }
      } catch (Exception ex) {
-        sb.append(" "  + m[i].getName() + fill.substring(0,nl- m[i].getName().length()) + "\t" + ex);
+                sb.append(" " + m[i].getName() + fill.substring(0, nl - m[i].getName().length()) + "\t" + ex);
+                ExceptionHandler.popupException(""+ex);
      }
     }
     sb.append("Capabilities");
@@ -303,7 +323,8 @@ public class AboutDB {
                m[i].invoke(dbmd,(Object[])null) );
       }
      } catch (Exception ex) {
-        sb.append(" "  + m[i].getName() + fill.substring(0,nl- m[i].getName().length()) + "\t" + ex);
+                sb.append(" " + m[i].getName() + fill.substring(0, nl - m[i].getName().length()) + "\t" + ex);
+                ExceptionHandler.popupException(""+ex);
      }
     }
     sb.append("\n");
@@ -318,7 +339,8 @@ public class AboutDB {
                m[i].invoke(dbmd,(Object[])null) );
       }
      } catch (Exception ex) {
-        sb.append(" "  + m[i].getName() + fill.substring(0,nl- m[i].getName().length()) + "\t" + ex);
+                sb.append(" " + m[i].getName() + fill.substring(0, nl - m[i].getName().length()) + "\t" + ex);
+                ExceptionHandler.popupException(""+ex);
      }
     }
     sb.append("\n");
@@ -333,7 +355,8 @@ public class AboutDB {
                m[i].invoke(dbmd,(Object[])null) );
       }
      } catch (Exception ex) {
-        sb.append(" "  + m[i].getName() + fill.substring(0,nl- m[i].getName().length()) + "\t" + ex);
+                sb.append(" " + m[i].getName() + fill.substring(0, nl - m[i].getName().length()) + "\t" + ex);
+                ExceptionHandler.popupException(""+ex);
      }
     }
     sb.append("\n");
@@ -350,7 +373,8 @@ public class AboutDB {
         }
       }
      } catch (Exception ex) {
-        sb.append(" "  + m[i].getName() + fill.substring(0,nl- m[i].getName().length()) + "\t" + ex);
+                sb.append(" " + m[i].getName() + fill.substring(0, nl - m[i].getName().length()) + "\t" + ex);
+                ExceptionHandler.popupException(""+ex);
      }
     }
     return sb.toString();
@@ -368,12 +392,13 @@ public class AboutDB {
        for (SQLException sqlex = (SQLException)ex; sqlex != null; sqlex = sqlex.getNextException()) {
           System.err.println(sqlex.toString());
        }
-       ex.printStackTrace();
+            ExceptionHandler.popupException(""+ex);
     } catch (Exception ex) {
       System.err.println("AboutDB.getTableModel " + ex);
-      ex.printStackTrace();
+            ExceptionHandler.popupException(""+ex);
     } catch (Throwable t) {
       System.err.println("AboutDB.getTableModel " + t);
+            ExceptionHandler.popupException(""+t);
     }
     return new DefaultTableModel();
   }
@@ -406,7 +431,7 @@ public class AboutDB {
         }
       }
     } catch (Exception ex) {
-      System.err.println("\nException: " + ex + "\n");
+            ExceptionHandler.popupException(""+ex);
     }
     return sb.toString();
   }

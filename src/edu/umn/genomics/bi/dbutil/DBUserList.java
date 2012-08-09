@@ -21,12 +21,12 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.bi.dbutil;
-import java.lang.*;
-import java.util.*;
-import javax.swing.*;
+
+import edu.umn.genomics.table.ExceptionHandler;
+import java.util.Vector;
+import javax.swing.DefaultListModel;
+
 /**
  * Provides a list of DBConnectParams that can be shared among a number 
  * components in order that all componets can display a consistent list 
@@ -51,7 +51,7 @@ public class DBUserList extends DefaultListModel {
           addElement(dbs[i]);
         }
       } catch (Throwable t) {
-        System.err.println(t);
+                ExceptionHandler.popupException(""+t);
       }
     }
   }
@@ -77,9 +77,10 @@ public class DBUserList extends DefaultListModel {
   public void setElementAt(Object obj, int index) {
     if (obj instanceof DBConnectParams) {
       try {
-        DBPreferences.deleteDBAccount((DBConnectParams)getElementAt(index));
-        DBPreferences.saveDBAccount((DBConnectParams)obj);
+                DBPreferences.deleteDBAccount((DBConnectParams) getElementAt(index));
+                DBPreferences.saveDBAccount((DBConnectParams) obj);
       } catch (Throwable t) {
+                ExceptionHandler.popupException(""+t);
       }
       super.setElementAt(obj, index);
     }
@@ -108,6 +109,7 @@ public class DBUserList extends DefaultListModel {
       try {
         DBPreferences.saveDBAccount((DBConnectParams)obj);
       } catch (Throwable t) {
+                ExceptionHandler.popupException(""+t);
       }
       super.insertElementAt(obj, index);
     }
@@ -124,6 +126,7 @@ public class DBUserList extends DefaultListModel {
       try {
         DBPreferences.saveDBAccount((DBConnectParams)obj);
       } catch (Throwable t) {
+                ExceptionHandler.popupException(""+t);
       }
       super.addElement(obj);
     }
@@ -147,6 +150,7 @@ public class DBUserList extends DefaultListModel {
         DBPreferences.deleteDBAccount((DBConnectParams)getElementAt(index));
         DBPreferences.saveDBAccount((DBConnectParams)element);
       } catch (Throwable t) {
+                ExceptionHandler.popupException(""+t);
       }
       return super.set(index, element);
     }
@@ -168,6 +172,7 @@ public class DBUserList extends DefaultListModel {
       try {
         DBPreferences.saveDBAccount((DBConnectParams)element);
       } catch (Throwable t) {
+                ExceptionHandler.popupException(""+t);
       }
       super.add(index, element);
     }
@@ -192,6 +197,7 @@ public class DBUserList extends DefaultListModel {
     try {
       DBPreferences.deleteDBAccount((DBConnectParams)getElementAt(index));
     } catch (Throwable t) {
+            ExceptionHandler.popupException(""+t);
     }
     super.removeElementAt(index);
   }
@@ -210,6 +216,7 @@ public class DBUserList extends DefaultListModel {
       try {
         DBPreferences.deleteDBAccount((DBConnectParams)obj);
       } catch (Throwable t) {
+                ExceptionHandler.popupException(""+t);
       }
       return super.removeElement(obj);
     }
@@ -232,6 +239,7 @@ public class DBUserList extends DefaultListModel {
       try {
         DBPreferences.deleteDBAccount((DBConnectParams)getElementAt(i));
       } catch (Throwable t) {
+                ExceptionHandler.popupException(""+t);
       }
     }
     super.removeAllElements();
@@ -251,6 +259,7 @@ public class DBUserList extends DefaultListModel {
     try {
       DBPreferences.deleteDBAccount((DBConnectParams)getElementAt(index));
     } catch (Throwable t) {
+            ExceptionHandler.popupException(""+t);
     }
     return super.remove(index);
   }
@@ -277,6 +286,7 @@ public class DBUserList extends DefaultListModel {
       try {
         DBPreferences.deleteDBAccount((DBConnectParams)getElementAt(i));
       } catch (Throwable t) {
+                ExceptionHandler.popupException(""+t);
       }
     }
     super.removeRange(fromIndex,toIndex);
@@ -284,6 +294,7 @@ public class DBUserList extends DefaultListModel {
 
   /**
    * Import Data Base account connection parameters from the the given source.
+     *
    * @param source a URL or file pathname to a preference file.
    */
   public void importDBUsers(String source) throws Exception {
@@ -297,7 +308,7 @@ public class DBUserList extends DefaultListModel {
           }
         }
       } catch (Throwable t) {
-        System.err.println(t);
+                ExceptionHandler.popupException(""+t);
       }
     } else {
     }

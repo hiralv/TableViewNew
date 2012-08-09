@@ -21,12 +21,12 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.bi.dbutil;
 
-import java.sql.*;
-import java.util.*;
+import edu.umn.genomics.table.ExceptionHandler;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashSet;
 
 /**
  * @author       J Johnson
@@ -34,6 +34,7 @@ import java.util.*;
  * @since        1.0
  */
 public class DBTypeInfo implements Comparable {
+
   public String type_name;
   public short data_type;
   public int precision;
@@ -77,30 +78,35 @@ public class DBTypeInfo implements Comparable {
       sql_datetime_sub = rs.getInt(17);
       num_prec_radix = rs.getInt(18);
     } catch (SQLException sqlex) {
+            ExceptionHandler.popupException(""+sqlex);
     }
   }
 
   public DBTypeInfo makeDBTypeInfo(ResultSet rs) {
     return null;
   }
+
   public HashSet makeDBTypeInfoHash(ResultSet rs) {
     return null;
   }
+
   public String toString() {
     return type_name + (create_params != null ? create_params : "");
   }
+
   public int compareTo(Object o) {
-    return compareTo(((DBTypeInfo)o));
+        return compareTo(((DBTypeInfo) o));
   }
+
   public int compareTo(DBTypeInfo o) {
     int c = -1;
     c = type_name.compareTo(o.type_name);
-    if (c == 0)
+        if (c == 0) {
       c = precision - o.precision;
-    if (c == 0)
+        }
+        if (c == 0) {
       c = data_type - o.data_type;
+        }
     return c;
   }
-
 }
-

@@ -21,11 +21,11 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.bi.dbutil;
-import java.util.*;
-import java.lang.ref.*;
+
+import edu.umn.genomics.table.ExceptionHandler;
+import java.lang.ref.SoftReference;
+import java.util.Vector;
 
 /**
  * VectorTree provides a hierarchical tree structure of Vectors
@@ -57,12 +57,15 @@ public class VectorTree {
               0 -> row vector
               1 -> row vector
   */
+
   static boolean canRef = false;
+
   static {
     try {
       Class.forName("java.lang.ref.SoftReference");
       canRef = true;
     } catch (ClassNotFoundException cnfe) {
+            ExceptionHandler.popupException(""+cnfe);
     }
   }
   int minRef;
@@ -75,19 +78,23 @@ public class VectorTree {
    * Create VectorTree with that will use softreferences. 
    */
   public VectorTree() {
-    this(200,1,1);
+        this(200, 1, 1);
   }
+
   /**
    * Create VectorTree with branchCount nummber of children at each node.
+     *
    * @param branchCount The number of children for each branch of the tree.
    */
   public VectorTree(int branchCount) {
-    this(branchCount,1,1);
+        this(branchCount, 1, 1);
   }
+
   /**
    * Create VectorTree with branchCount nummber of children at each node, and 
-   * designate which levels from the leaf should be SoftReferences.  This 
+     * designate which levels from the leaf should be SoftReferences. This
    * affects the ganularity of volatile cache.
+     *
    * @param branchCount The number of children for each branch of the tree.
    * @param minLevelRef The lowest level from the leaf that should be a SoftReference
    * @param maxLevelRef The highest level from the leaf that should be a SoftReference
@@ -104,23 +111,27 @@ public class VectorTree {
    * @return The tree depth required for the size. 
    */
   private int getTreeDepth(int size) {
-    if (size < 2)
+        if (size < 2) {
       return 1; 
-    return Math.max(1,(int)Math.ceil(Math.log(size)/Math.log(branchCount)));
   }
+        return Math.max(1, (int) Math.ceil(Math.log(size) / Math.log(branchCount)));
+    }
 
   /**
    * Get a node for the Tree.
+     *
    * @param v A node to be repackaged and returned.
    * @param vsize The size for the Vector of this node.
    * @param ref Whether to use a SoftReference for this node.
    * @return A Vector or a SoftReference to a Vector.
    */
   private Object getNode(Vector v, int vsize, boolean ref) {
-    if (v == null)
+        if (v == null) {
       v = new Vector(vsize);
-    if (v.size() != vsize) 
+        }
+        if (v.size() != vsize) {
       v.setSize(vsize);
+        }
     Object o = v;
     if (canRef && ref) { 
       o = new SoftReference(o);
@@ -135,9 +146,9 @@ public class VectorTree {
    */
   private Vector getNodeVector(Object o) {
     if (o instanceof Vector) {
-      return (Vector)o;
+            return (Vector) o;
     } else if (canRef && o instanceof SoftReference) {
-      Vector v = (Vector)((SoftReference)o).get();
+            Vector v = (Vector) ((SoftReference) o).get();
       return v;
     }
     return null;
@@ -156,14 +167,15 @@ public class VectorTree {
    *@param size The number of elements that can be stored. 
    */
   synchronized public void setSize(int size) {
-    if (this.size == size) 
+        if (this.size == size) {
       return;
+        }
     int oldDepth = getTreeDepth(this.size);
     int newDepth = getTreeDepth(size);
     // Adjust hierarchy level
     if (newDepth > oldDepth) { // Move current root to a lower level branch
       Vector oldroot = root;
-      root = (Vector)getNode(null,branchCount,false);
+            root = (Vector) getNode(null, branchCount, false);
       Vector v = root;
       for (int p = newDepth - 1; p > oldDepth; p--) {
         Object o = getNode(null,branchCount,p >= minRef && p <= maxRef);
@@ -199,13 +211,14 @@ public class VectorTree {
    * is the first time it was accessed or if the cache had been flushed.
    */
   synchronized public Vector get(int index) {
-    if (index >= size) 
+        if (index >= size) {
       return null;
+        }
     int pow = getTreeDepth(size);
     Vector v = root;
     int idx = index; 
     for (int p = pow - 1; p >= 0; p--) {
-      int div = (int)Math.pow(branchCount,p);
+            int div = (int) Math.pow(branchCount, p);
       int i = idx / div;
       Vector nv = null;
       if (v.size() <= i) {
@@ -214,8 +227,8 @@ public class VectorTree {
       Object o = v.elementAt(i);   
       if (getNodeVector(o) == null) {
 //if (o instanceof SoftReference) System.err.println( " cache miss " + i + " for " + index); 
-        o = getNode(null,p>1?branchCount:0,p >= minRef && p <= maxRef);
-        v.setElementAt(o,i);
+                o = getNode(null, p > 1 ? branchCount : 0, p >= minRef && p <= maxRef);
+                v.setElementAt(o, i);
       }
       v = getNodeVector(o);
       idx = idx % div;
@@ -224,35 +237,41 @@ public class VectorTree {
   }
 
   private void printNode(Object o, int level, int depth) {
-    if (o == null) 
+        if (o == null) {
       return;
+        }
     String s = "";
-    for (int sp = 0; sp < level; sp++)
+        for (int sp = 0; sp < level; sp++) {
       s += "\t";
+        }
     System.err.print(s);
     if (level >= depth) {
       System.err.println("  " + o);
       return;
     }
-    if (o instanceof Vector) 
+        if (o instanceof Vector) {
       System.err.println(" [");
-    else
+        } else {
       System.err.println("-[");
+        }
     Vector v = getNodeVector(o); 
     if (v != null) {
       for (int i = 0; i < v.size(); i++) {
-        printNode(v.elementAt(i),level+1,depth);
+                printNode(v.elementAt(i), level + 1, depth);
       }
     }
     System.err.print(s);
-    if (o instanceof Vector) 
+        if (o instanceof Vector) {
       System.err.println(" ]");
-    else
+        } else {
       System.err.println("-]");
   }
+    }
+
   public void dump(int depth) {
-    printNode(root,0,depth);
+        printNode(root, 0, depth);
   }
+
   public void dump() {
     dump(getTreeDepth(getSize()));
   }

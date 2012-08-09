@@ -21,15 +21,12 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.bi.dbutil;
 
-import java.sql.Types;
-import java.util.*;
-import java.lang.reflect.*;
-import java.awt.*;
-import javax.swing.*;
+import edu.umn.genomics.table.ExceptionHandler;
+import java.awt.Component;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
 
 /**
  * Displays the java.sql.Types name for a java.sql.Types value.
@@ -38,7 +35,9 @@ import javax.swing.*;
  * @since        1.0
  */
 public class SQLTypeListRenderer extends DefaultListCellRenderer {
+
   static SQLTypeNames sqlTypeName = SQLTypeNames.getSharedInstance();
+
   /**
    */
   public Component getListCellRendererComponent(
@@ -50,7 +49,7 @@ public class SQLTypeListRenderer extends DefaultListCellRenderer {
     try {
       String s = null;
       if (value != null && value instanceof Number) {
-        s = sqlTypeName.get(((Number)value).intValue());
+                s = sqlTypeName.get(((Number) value).intValue());
       } 
       if (s != null) {
         super.setText(s);
@@ -58,7 +57,7 @@ public class SQLTypeListRenderer extends DefaultListCellRenderer {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
       }
     } catch (Exception ex) {
-      System.err.println(this + " " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
     return this;
   }

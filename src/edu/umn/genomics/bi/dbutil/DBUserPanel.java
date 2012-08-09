@@ -21,16 +21,20 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.bi.dbutil;
 
-import java.awt.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import java.awt.event.*;
 import edu.umn.genomics.file.ExtensionFileFilter;
+import edu.umn.genomics.table.ExceptionHandler;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
+import java.util.Arrays;
+import javax.swing.*;
 
 /**
  * An entry form in which to enter parameters required for a JDBC connection 
@@ -40,24 +44,25 @@ import edu.umn.genomics.file.ExtensionFileFilter;
  * @since        1.0
  */
 public class DBUserPanel implements DBConnectParams {
+
   ComboBoxModel dbModel = new DBComboBoxModel();
-  JLabel          dbUsersLabel;
-  JComboBox       dbUsers;
-  JLabel          dbNameLabel;
-  JTextField      dbNameField;
-  JLabel          userNameLabel;
-  JTextField      userNameField;
-  JLabel          passwordLabel;
-  JPasswordField  passwordField;
-  JLabel          serverLabel;
-  JTextField      serverField;
-  JLabel          driverLabel;
-  JTextField      driverField;
-  JPanel          connectionPanel;
-  JLabel          status;
-  JFileChooser 	  fileChooser;
-  JPanel          importPanel;
-  JTextField      importTextField;
+    JLabel dbUsersLabel;
+    JComboBox dbUsers;
+    JLabel dbNameLabel;
+    JTextField dbNameField;
+    JLabel userNameLabel;
+    JTextField userNameField;
+    JLabel passwordLabel;
+    JPasswordField passwordField;
+    JLabel serverLabel;
+    JTextField serverField;
+    JLabel driverLabel;
+    JTextField driverField;
+    JPanel connectionPanel;
+    JLabel status;
+    JFileChooser fileChooser;
+    JPanel importPanel;
+    JTextField importTextField;
   DBConnectParams dbuser = null;
   String exts[] = {"xml"};
   javax.swing.filechooser.FileFilter xmlFileFilter = new ExtensionFileFilter(Arrays.asList(exts), ".xml files");
@@ -113,15 +118,10 @@ public class DBUserPanel implements DBConnectParams {
                 } else {
                 }
               } catch (Exception ex) {
-                JOptionPane.showMessageDialog(
-                    ((JComponent)e.getSource()).getTopLevelAncestor(),
-                    ex,
-                    "Data base user import failed",
-                    JOptionPane.ERROR_MESSAGE);
+                                ExceptionHandler.popupException(""+ex);
                 }
             }
-          }
-        );
+                    });
       importPanel.add(label);
       importPanel.add(importTextField);
       importPanel.add(fcBtn);
@@ -142,6 +142,7 @@ public class DBUserPanel implements DBConnectParams {
             dbuser = (DBConnectParams)dbModel.getElementAt(0);
           }
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     }
@@ -150,6 +151,7 @@ public class DBUserPanel implements DBConnectParams {
     }
     dbUsers.addItemListener(
       new ItemListener() {
+
         public void itemStateChanged(ItemEvent e) {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             setDBUser((DBConnectParams)e.getItem());
@@ -203,6 +205,7 @@ public class DBUserPanel implements DBConnectParams {
     addBtn.setToolTipText("Add or update this user profile");
     addBtn.addActionListener(
         new ActionListener() {
+
           public void actionPerformed(ActionEvent e) {
             try {
               String name = dbNameField.getText();
@@ -213,51 +216,48 @@ public class DBUserPanel implements DBConnectParams {
               DBUserList.getSharedInstance().addElement(new DBUser(
                   name, usr, pw, url, driver));
             } catch (Exception ex) {
+                            ExceptionHandler.popupException(""+ex);
             }
           }
-        }
-      );
+                });
     btnPanel.add(addBtn);
     // Remove
     JButton rmvBtn = new JButton("Remove");
     rmvBtn.setToolTipText("Remove this user profile");
     rmvBtn.addActionListener(
         new ActionListener() {
+
           public void actionPerformed(ActionEvent e) {
             try {
               DBUserList.getSharedInstance().removeElement(dbUsers.getSelectedItem());
             } catch (Exception ex) {
+                            ExceptionHandler.popupException(""+ex);
             }
           }
-        }
-      );
+                });
     btnPanel.add(rmvBtn);
     // Test
     JButton testBtn = new JButton("Test");
     testBtn.setToolTipText("Test connection to this database");
     testBtn.addActionListener(
         new ActionListener() {
+
           public void actionPerformed(ActionEvent e) {
             String name = dbNameField.getText();
             String usr = userNameField.getText();
-            String pw =  new String(passwordField.getPassword());
+                        String pw = new String(passwordField.getPassword());
             String url = serverField.getText();
             String driver = driverField.getText();
             try {
               DBTestConnection.testConnection(usr, pw, url, driver);
               JOptionPane.showMessageDialog(
-                  ((JComponent)e.getSource()).getTopLevelAncestor(),
+                                    ((JComponent) e.getSource()).getTopLevelAncestor(),
                   "Able to connect to " + url);
             } catch (Exception ex) {
-              JOptionPane.showMessageDialog(
-                  ((JComponent)e.getSource()).getTopLevelAncestor(),
-                  ex,
-                  "Data base connection failed",
-                  JOptionPane.ERROR_MESSAGE);
+                            ExceptionHandler.popupException(""+ex);
             }
           }
-        }
-      );
+                });
     btnPanel.add(testBtn);
     try {
       Class.forName("java.util.prefs.Preferences");
@@ -266,84 +266,79 @@ public class DBUserPanel implements DBConnectParams {
       impBtn.setToolTipText("Import Database User Account Parameters");
       impBtn.addActionListener(
           new ActionListener() {
-            String[] optionNames = { "Import","Cancel" };
+
+                        String[] optionNames = {"Import", "Cancel"};
+
             public void actionPerformed(ActionEvent e) {
               try {
                 int choice = JOptionPane.showOptionDialog(
-                   ((JComponent)e.getSource()).getTopLevelAncestor(), 
+                                        ((JComponent) e.getSource()).getTopLevelAncestor(),
                    getImportPanel(),
                    "Import Database User Parameters",
                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
                    null, optionNames, optionNames[0]);
-                switch(choice) {
+                                switch (choice) {
                 case 0:
                   DBUserList.getSharedInstance().importDBUsers(importTextField.getText());
                   break;
                 }
               } catch (Exception ex) {
+                                ExceptionHandler.popupException(""+ex);
               }
             }
-          }
-        );
+                    });
       btnPanel.add(impBtn);
       // Export this
       JButton expBtn = new JButton("Export");
       expBtn.setToolTipText("Export this Database User Account Parameters");
       expBtn.addActionListener(
           new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
               try {
                 if (fileChooser == null) {
                   fileChooser = new JFileChooser();
                   fileChooser.addChoosableFileFilter(xmlFileFilter);
                 }
-                int returnVal = fileChooser.showOpenDialog(((JComponent)e.getSource()).getTopLevelAncestor());
+                                int returnVal = fileChooser.showOpenDialog(((JComponent) e.getSource()).getTopLevelAncestor());
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                   File file = fileChooser.getSelectedFile();
                   String accnt = dbUsers.getSelectedItem().toString();
-                  DBUserList.getSharedInstance().exportDBUsers(file.getAbsolutePath(),accnt);
+                                    DBUserList.getSharedInstance().exportDBUsers(file.getAbsolutePath(), accnt);
                 } else {
                 }
               } catch (Exception ex) {
-                JOptionPane.showMessageDialog(
-                    ((JComponent)e.getSource()).getTopLevelAncestor(),
-                    ex,
-                    "Data base user export failed",
-                    JOptionPane.ERROR_MESSAGE);
+                                ExceptionHandler.popupException(""+ex);
                 }
             }
-          }
-        );
+                    });
       btnPanel.add(expBtn);
       // Export this
       JButton expAllBtn = new JButton("Export All");
       expAllBtn.setToolTipText("Export ALL Database User Account Parameters");
       expAllBtn.addActionListener(
           new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
               try {
                 if (fileChooser == null) {
                   fileChooser = new JFileChooser();
                   fileChooser.addChoosableFileFilter(xmlFileFilter);
                 }
-                int returnVal = fileChooser.showOpenDialog(((JComponent)e.getSource()).getTopLevelAncestor());
+                                int returnVal = fileChooser.showOpenDialog(((JComponent) e.getSource()).getTopLevelAncestor());
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                   File file = fileChooser.getSelectedFile();
-                  DBUserList.getSharedInstance().exportDBUsers(file.getAbsolutePath(),null);
+                                    DBUserList.getSharedInstance().exportDBUsers(file.getAbsolutePath(), null);
                 } else {
                 }
               } catch (Exception ex) {
-                JOptionPane.showMessageDialog(
-                    ((JComponent)e.getSource()).getTopLevelAncestor(),
-                    ex,
-                    "Data base user export failed",
-                    JOptionPane.ERROR_MESSAGE);
+                                ExceptionHandler.popupException(""+ex);
                 }
             }
-          }
-        );
+                    });
       btnPanel.add(expAllBtn);
     } catch (ClassNotFoundException cnfex) {
+            ExceptionHandler.popupException(""+cnfex);
     }
     connectionPanel.add(editPanel);
     connectionPanel.add(btnPanel,BorderLayout.SOUTH);
@@ -367,8 +362,8 @@ public class DBUserPanel implements DBConnectParams {
    * @param parentComponent the parent for this entry form panel.
    */
   public void show(Component parentComponent) {
-    String[] ConnectOptionNames = { "OK","Cancel" };
-    String   ConnectTitle = "Data Base Account Information";
+        String[] ConnectOptionNames = {"OK", "Cancel"};
+        String ConnectTitle = "Data Base Account Information";
     connectionPanel.validate();
     int choice = JOptionPane.showOptionDialog(parentComponent, connectionPanel,
                                   ConnectTitle,
@@ -377,7 +372,7 @@ public class DBUserPanel implements DBConnectParams {
      
     String name = dbNameField.getText();
     String usr = userNameField.getText();
-    String pw =  new String(passwordField.getPassword());
+        String pw = new String(passwordField.getPassword());
     String url = serverField.getText();
     String driver = driverField.getText();
     switch (choice) {
@@ -387,11 +382,7 @@ public class DBUserPanel implements DBConnectParams {
         dbuser = new DBUser(name, usr, pw, url, driver);
         DBUserList.getSharedInstance().addElement(dbuser);
       } catch (Exception e) {
-        JOptionPane.showMessageDialog(parentComponent,
-                                   e,
-                                   "Data base connection failed",
-                                   JOptionPane.ERROR_MESSAGE);
-        System.err.println("DB connection failed " + e);
+                    ExceptionHandler.popupException(""+e);
       }
       break;
     default:
@@ -443,6 +434,7 @@ public class DBUserPanel implements DBConnectParams {
 
   /**
    * Open a dialog with database user account connection parameters.
+     *
    * @param args No arguments are used.
    */
   public static void main(String[] args) {

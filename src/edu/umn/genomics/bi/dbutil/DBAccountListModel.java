@@ -21,21 +21,23 @@
  * GNU General Public License for more details.
  *
  */
-
 package edu.umn.genomics.bi.dbutil;
 
-import  java.util.*;
-import  java.util.prefs.*;
-import  java.io.*;
-import  java.net.*;
-import  java.sql.Connection;
-import  java.sql.SQLException;
-import  java.sql.DriverManager;
-import  java.text.SimpleDateFormat;
-import  java.lang.ref.*;
-import  javax.swing.*;
-import  javax.swing.event.*;
-import  edu.umn.genomics.file.OpenInputSource;
+import edu.umn.genomics.file.OpenInputSource;
+import edu.umn.genomics.table.ExceptionHandler;
+import edu.umn.genomics.table.TableView;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.prefs.*;
+import javax.swing.AbstractListModel;
+import javax.swing.ComboBoxModel;
 
 /**
  * Manages a user's JDBC Database account preferences and provides a ComboBoxModel 
@@ -51,6 +53,7 @@ import  edu.umn.genomics.file.OpenInputSource;
  */
 public class DBAccountListModel extends AbstractListModel implements ComboBoxModel {
     // Key names for the account properties
+
     private static final String USER = "user";
     private static final String PASSWD = "passwd";
     private static final String URL = "url";
@@ -64,17 +67,20 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
     Preferences prefs = Preferences.userNodeForPackage(this.getClass());
     // Preference Listeners 
     PreferenceChangeListener pcl = new PreferenceChangeListener() {
+
         public void preferenceChange(PreferenceChangeEvent evt) {
             Preferences pref = evt.getNode();
             update(pref);
         }
     };
     NodeChangeListener ncl = new NodeChangeListener() {
+
         public void childAdded(NodeChangeEvent evt) {
             Preferences pref = evt.getChild();
             pref.addPreferenceChangeListener(pcl);
             add(pref); 
         }
+
         public void childRemoved(NodeChangeEvent evt) {
             Preferences pref = evt.getChild();
             remove(pref); 
@@ -90,7 +96,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
         Class prefclass = this.getClass();
         prefs = Preferences.userNodeForPackage(prefclass);
       } catch (Exception ex) {
-        System.err.println("prefclass " + ex);
+            ExceptionHandler.popupException(""+ex);
       }
         prefs.addNodeChangeListener(ncl);
         String[] accnts = getAccountNames();
@@ -104,6 +110,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Return the number of accounts in the list.
+     *
      * @return the number of accounts in the list.
      */
     public int getSize() {
@@ -112,6 +119,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Returns the account name at the specified index int the list.
+     *
      * @param index the index of account name in the list.
      * @return the account name at the specified index.
      */
@@ -121,6 +129,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Set the selected accountName. The selected accountName may be null.
+     *
      * @param accountName the account name of the selected database account.
      */
     public void setSelectedItem(Object accountName) {
@@ -129,6 +138,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Return the name of the selected database account.
+     *
      * @return the name of the selected database account.
      */
     public Object getSelectedItem() {
@@ -137,6 +147,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Return an array of all database account names.
+     *
      * @return an array of all database account names.
      * @throws BackingStoreException if there was an error retrieving preference information
      */
@@ -153,7 +164,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
         int idx = acctList.indexOf(acct);
         if (idx < 0) {
             for (ListIterator iter = acctList.listIterator(); iter.hasNext();) {
-                String item = (String)iter.next();
+                String item = (String) iter.next();
                 if (acct.compareToIgnoreCase(item) < 0) {
                    idx = iter.previousIndex();
                    break;
@@ -163,12 +174,12 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
                 idx = acctList.size();
                 acctList.add(acct);
             } else {
-                acctList.add(idx,acct);
+                acctList.add(idx, acct);
             }
-            if ( acctList.size() == 1 && selectedItem == null && acct != null ) {
+            if (acctList.size() == 1 && selectedItem == null && acct != null) {
                 setSelectedItem(acct);
             }
-            fireIntervalAdded(this,idx,idx);
+            fireIntervalAdded(this, idx, idx);
         } else {
             update(pref);
         }
@@ -181,28 +192,29 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
     private void remove(Preferences pref) {
         String acct = pref.name();
         int idx = acctList.indexOf(acct);
-        if ( acct != null && acct.equals(selectedItem) ) {
+        if (acct != null && acct.equals(selectedItem)) {
             if (idx > 0) {
-                setSelectedItem( getElementAt( idx - 1 ) );
+                setSelectedItem(getElementAt(idx - 1));
             } else {
-                setSelectedItem( getSize() == 1 ? null : getElementAt( idx + 1 ) );
+                setSelectedItem(getSize() == 1 ? null : getElementAt(idx + 1));
             }
         }
         if (idx >= 0) {
             acctList.remove(idx); 
-            fireIntervalRemoved(this,idx,idx);
+            fireIntervalRemoved(this, idx, idx);
         }
     }
 
     /**
      * Notify listeners that a database account preference node has changed.
+     *
      * @param pref the database account preference node that changed.
      */
     private void update(Preferences pref) {
         String acct = pref.name();
         int idx = acctList.indexOf(acct);
         if (idx >= 0) {
-            fireContentsChanged(this,idx,idx);
+            fireContentsChanged(this, idx, idx);
         }
     }
 
@@ -216,13 +228,14 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
      */
     private String getValue(String accountName, String key, String def) throws BackingStoreException {
         if (prefs.nodeExists(accountName)) {
-            return prefs.node(accountName).get(key,def);
+            return prefs.node(accountName).get(key, def);
         }
         return def;
     }
 
     /**
      * Set the value of a preference node property.
+     *
      * @param accountName the name of the account for which to set the property.
      * @param key the name of the property.
      * @param val the value for the property.
@@ -230,7 +243,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
      */
     private void setValue(String accountName, String key, String val) throws BackingStoreException {
         if (prefs.nodeExists(accountName)) {
-            prefs.node(accountName).put(key,val);
+            prefs.node(accountName).put(key, val);
             prefs.sync();
         }
     }
@@ -245,15 +258,15 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
      *   "password"
      * @param properties if not null, properties will be set in this instance.
      * @param accountName the account name for which to set properties, if null, 
-     *        properties are set for the selected item, and if no item is selected 
-     *        properties are set for the first item.
+     * properties are set for the selected item, and if no item is selected
+     * properties are set for the first item.
      * @return the Connection properties.
      */
     public Properties getProperties(Properties properties, String accountName) {
         Properties prop = properties != null ? properties : new Properties();
-        String acctName = accountName != null ? accountName : (String)getSelectedItem();
+        String acctName = accountName != null ? accountName : (String) getSelectedItem();
         if (acctName == null && getSize() > 0) {
-            acctName = (String)getElementAt(0);
+            acctName = (String) getElementAt(0);
         }
         if (acctName != null) {
             try {
@@ -263,7 +276,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
                 prop.setProperty("url", getURL(acctName));
                 prop.setProperty("driver", getDriver(acctName));
             } catch (BackingStoreException bsex) {
-                System.err.println(this.getClass() + " getProperties: " + bsex);
+                ExceptionHandler.popupException(""+bsex);
                 return null;
             }
         }
@@ -312,6 +325,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Set the database server URL for the specified database account.
+     *
      * @param accountName the name of the account for which to set the property.
      * @param url the database server URL for the specified database account.
      * @throws BackingStoreException if there was an error retrieving preference information
@@ -322,6 +336,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Set the database user name for the specified database account.
+     *
      * @param accountName the name of the account for which to set the property.
      * @param user the database user name for the specified database account.
      * @throws BackingStoreException if there was an error retrieving preference information
@@ -332,6 +347,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Set the database user password for the specified database account.
+     *
      * @param accountName the name of the account for which to set the property.
      * @param password the database user password for the specified database account.
      * @throws BackingStoreException if there was an error retrieving preference information
@@ -342,6 +358,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Set the JDBC driver class name for the specified database account.
+     *
      * @param accountName the name of the account for which to set the property.
      * @param driver the JDBC driver class name for the specified database account.
      * @throws BackingStoreException if there was an error retrieving preference information
@@ -352,6 +369,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Add a database account preference.
+     *
      * @param accountName the name of the account.
      * @throws BackingStoreException if there was an error retrieving preference information
      * @see #setURL
@@ -366,6 +384,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Remove a database account preference.
+     *
      * @param accountName the name of the account.
      * @throws BackingStoreException if there was an error retrieving preference information
      */
@@ -376,6 +395,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Establish a Connection to the given database account.
+     *
      * @param accountName the name of the account.
      * @return a connection to the database account.
      * @throws NullPointerException if the given accountName is null
@@ -389,6 +409,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
             try {
                 Class.forName(getDriver(accountName));
             } catch (ClassNotFoundException ex) {
+                ExceptionHandler.popupException(""+ex);
             }
             return DriverManager.getConnection(getURL(accountName),
                                                getUser(accountName),
@@ -408,7 +429,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
         for (int i = 0; i < accnts.length; i++) {
             list.add(getURL(accnts[i]));
         }
-        return (String[])list.toArray(new String[list.size()]);
+        return (String[]) list.toArray(new String[list.size()]);
     }
 
     /**
@@ -426,11 +447,11 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
         }
         String drivers = System.getProperty("jdbc.drivers");
         if (drivers != null) {
-            for (StringTokenizer st = new StringTokenizer(drivers,":"); st.hasMoreTokens();) {
+            for (StringTokenizer st = new StringTokenizer(drivers, ":"); st.hasMoreTokens();) {
                 list.add(st.nextToken());
             }
         }
-        return (String[])list.toArray(new String[list.size()]);
+        return (String[]) list.toArray(new String[list.size()]);
     }
 
     /**
@@ -444,7 +465,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
         for (int i = 0; i < accnts.length; i++) {
             list.add(getUser(accnts[i]));
         }
-        return (String[])list.toArray(new String[list.size()]);
+        return (String[]) list.toArray(new String[list.size()]);
     }
 
     /**
@@ -537,6 +558,7 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Export Database account connection parameters to the given filename.
+     *
      * @param filename a preferences file.
      * @param name If not null, only export the connection parameters for this account, otherwise
      * export all account parameters.
@@ -553,9 +575,10 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
 
     /**
      * Export Database account connection parameters to the given filename.
+     *
      * @param os an open output stream to a preferences file.
-     * @param name If not null, only export the connection parameters for this account, otherwise
-     * export all account parameters.
+     * @param name If not null, only export the connection parameters for this
+     * account, otherwise export all account parameters.
      * @throws NullPointerException
      * @throws SecurityException  if a security manager is present and it denies RuntimePermission("preferences").
      * @throws IOException if writing to the specified output stream results in an IOException.
@@ -573,6 +596,4 @@ public class DBAccountListModel extends AbstractListModel implements ComboBoxMod
             prefs.exportSubtree(os);
         }
     }
-
-
 }
