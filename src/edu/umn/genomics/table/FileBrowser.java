@@ -158,7 +158,6 @@ public class FileBrowser extends AbstractTableSource implements OpenTableSource 
       openTableSource(path.getText());
     } catch (Exception ex) {
       System.err.println(" openTableSource " + ex);
-      ex.printStackTrace();
       JOptionPane.showMessageDialog((Window)getTopLevelAncestor(),
                                      ex,
                                      "Unable to open table",
