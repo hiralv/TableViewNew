@@ -375,9 +375,9 @@ public final class TableView extends JPanel implements Serializable //, Printabl
     JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('f');
 
-        mi = (JMenuItem)fileMenu.add(new JMenuItem("load table"));
+        mi = (JMenuItem)fileMenu.add(new JMenuItem("Load Table"));
         mi.setMnemonic('l');
-        mi.getAccessibleContext().setAccessibleDescription("load table");
+        mi.getAccessibleContext().setAccessibleDescription("Load Table");
         mi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
               LoadTable lt = getLoadTable();
@@ -388,9 +388,9 @@ public final class TableView extends JPanel implements Serializable //, Printabl
             }
         });
 
-        mi = (JMenuItem)fileMenu.add(new JMenuItem("save selection"));
+        mi = (JMenuItem)fileMenu.add(new JMenuItem("Save Selection"));
         mi.setMnemonic('s');
-        mi.getAccessibleContext().setAccessibleDescription("save selection");
+        mi.getAccessibleContext().setAccessibleDescription("Save Selection");
         mi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
               int returnVal = fc.showSaveDialog((Window)getTopLevelAncestor());
@@ -409,7 +409,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
             }
         });
 
-        mi = (JMenuItem)fileMenu.add(new JMenuItem("output selection"));
+        mi = (JMenuItem)fileMenu.add(new JMenuItem("Output Selection"));
         mi.setMnemonic('o');
         mi.getAccessibleContext().setAccessibleDescription("Output Selection");
         mi.addActionListener(new ActionListener() {
