@@ -21,12 +21,12 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.component;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JComponent;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeListener;
 
 /**
  * Hide all references to JSpinner and SpinnerNumberModel,

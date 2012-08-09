@@ -21,8 +21,8 @@
  * GNU General Public License for more details.
  * 
  */
-
 package edu.umn.genomics.component;
+
 import com.itextpdf.awt.DefaultFontMapper;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -34,6 +34,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 import java.io.IOException;
+import edu.umn.genomics.table.ExceptionHandler;
 
 /**
  * Produce a Portable Document File from a Java Component, using 
@@ -109,11 +110,12 @@ public class SavePDF {
         iw = Integer.parseInt(iwtf.getText());
         ih = Integer.parseInt(ihtf.getText());
       } catch (Exception ex) {
+                ExceptionHandler.popupException(""+ex);
       }
       iw = iw > 0 ? iw : w;
       ih = ih > 0 ? ih : h;
       if (iw != w || ih != h) {
-        c.setSize(iw,ih);
+                c.setSize(iw, ih);
       }
     
       // step 1: creation of a document-object
@@ -157,29 +159,22 @@ public class SavePDF {
         float sf = (float)Math.min(sfx,sfy);
         cb.addTemplate(tp, sf, 0f, 0f, sf, 0f, 0f);
         
-      }
-      catch(DocumentException de) {
-        System.err.println(de.getMessage());
-        de.printStackTrace();
-      }
-      catch(IOException ioe) {
-        System.err.println(ioe.getMessage());
-        ioe.printStackTrace();
-      }
-      catch(Exception ex) {
-        System.err.println(ex.getMessage());
-        ex.printStackTrace();
+            } catch (DocumentException de) {
+                ExceptionHandler.popupException(""+de);
+            } catch (IOException ioe) {
+                ExceptionHandler.popupException(""+ioe);
+            } catch (Exception ex) {
+                ExceptionHandler.popupException(""+ex);
       }
       
       // step 5: we close the document
       document.close();
   
       if (iw != w || ih != h) {
-        c.setSize(w,h);
+                c.setSize(w, h);
       }
 
     }
     return true;
   }
-    
 }

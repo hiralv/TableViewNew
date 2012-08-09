@@ -21,20 +21,23 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.component;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import javax.imageio.*;
-import java.io.*;
+import edu.umn.genomics.table.ExceptionHandler;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.TreeSet;
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.*;
-import javax.swing.text.*;
-import javax.swing.border.*;
-import java.util.*;
 //import edu.umn.genomics.j3d.CaptureCanvas3D;
 
 /**
@@ -53,6 +56,7 @@ public class SaveImage {
       j3Davailable = true;
     } catch(ClassNotFoundException e) {
       j3Davailable = false;
+            ExceptionHandler.popupException(""+e);
     }
   }
 
@@ -184,25 +188,27 @@ public class SaveImage {
         iw = Integer.parseInt(iwtf.getText());
         ih = Integer.parseInt(ihtf.getText());
       } catch (Exception ex) {
+                ExceptionHandler.popupException(""+ex);
       }
       iw = iw > 0 ? iw : w;
       ih = ih > 0 ? ih : h;
       if (iw != w || ih != h) {
-        c.setSize(iw,ih);
+                c.setSize(iw, ih);
       }
       BufferedImage img = null;
       if (j3Davailable && isCaptureCanvas3D(c)) {
         final Component comp = c;
         Observer observer = new Observer() { 
+
           final ButtonGroup fbg = bg; 
           final File ffile = file;
+
           public void update(Observable o, Object arg) {
             if (arg instanceof BufferedImage) {
               try {
-                ImageIO.write((BufferedImage)arg,fbg.getSelection().getActionCommand(),ffile);
+                                ImageIO.write((BufferedImage) arg, fbg.getSelection().getActionCommand(), ffile);
               } catch (IOException ioex) {
-                JOptionPane.showMessageDialog(comp, ioex.toString(), "Save Image",
-                                              JOptionPane.ERROR_MESSAGE);
+                                ExceptionHandler.popupException(""+ioex);
               }
             } 
           }
@@ -216,8 +222,7 @@ public class SaveImage {
           Class.forName("edu.umn.genomics.j3d.CaptureCanvas3D")
             .getMethod("captureImage",paramClass).invoke(c,args);
         } catch (Exception ex) {
-          JOptionPane.showMessageDialog(comp, ex.toString(), "Save Image",
-                                        JOptionPane.ERROR_MESSAGE);
+                    ExceptionHandler.popupException(""+ex);
         }
       } else {
         img = new BufferedImage(iw, ih, BufferedImage.TYPE_INT_RGB);
@@ -238,6 +243,7 @@ public class SaveImage {
     try {
       val = Class.forName("edu.umn.genomics.j3d.CaptureCanvas3D").isInstance(c);
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     return val;
   }
@@ -249,11 +255,14 @@ public class SaveImage {
    * extensions.
    */
   class ImageFilter extends javax.swing.filechooser.FileFilter {
+
     String[] exts = {};
+
     ImageFilter(String[] exts) {
       this.exts = exts;
     }
     // Accept all directories and all gif, jpg, or tiff files.
+
     public boolean accept(File f) {
       if (f.isDirectory()) {
         return true;
@@ -262,8 +271,8 @@ public class SaveImage {
       String s = f.getName();
       if (s != null) {
         int i = s.lastIndexOf('.');
-        if (i > 0 &&  i < s.length() - 1) {
-          ext = s.substring(i+1).toLowerCase();
+            if (i > 0 && i < s.length() - 1) {
+                ext = s.substring(i + 1).toLowerCase();
         }
       }
       for (int i = 0; i < exts.length; i++) {
