@@ -21,20 +21,23 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
-import java.io.*;
-import java.net.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.StringTokenizer;
 import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
-import java.util.*;
-import java.lang.reflect.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.TableModel;
 
 /**
  * A Graphical User Interface that contains browsers for various datasources, 
@@ -48,6 +51,7 @@ import java.lang.reflect.*;
  * @see  javax.swing.ListSelectionModel
  */
 public class LoadTable extends AbstractTableSource {
+
   JTabbedPane tpane; 
   JButton loadBtn = new JButton("load");
   JButton mergeBtn = new JButton("merge");
@@ -58,31 +62,31 @@ public class LoadTable extends AbstractTableSource {
   JDialog dialog = null;
   MergeTableModel mtm = null;
   ChangeListener cl = new ChangeListener() {
+
     public void stateChanged(ChangeEvent e) {
       AbstractTableSource src = null;
       if (e.getSource() instanceof JTabbedPane) {
-        src = (AbstractTableSource)((JTabbedPane)e.getSource()).getSelectedComponent();
+                src = (AbstractTableSource) ((JTabbedPane) e.getSource()).getSelectedComponent();
       } else if (e.getSource() instanceof AbstractTableSource) {
-        src = (AbstractTableSource)e.getSource();
+                src = (AbstractTableSource) e.getSource();
       }
-      setTableSource(src.getTableModel(),src.getTableSource());
+            setTableSource(src.getTableModel(), src.getTableSource());
     }
   };
   DocumentListener docListener = new DocumentListener() {
+
     public void insertUpdate(DocumentEvent e) {
       setLoadEnable();
     }
+
     public void removeUpdate(DocumentEvent e) {
       setLoadEnable();
     }
+
     public void changedUpdate(DocumentEvent e) {
       setLoadEnable();
     }
   };
-
-
-
-  
 
   /**
    * Create a LoadTable.
@@ -92,11 +96,11 @@ public class LoadTable extends AbstractTableSource {
     try {
       Properties props = getDefaultProperties();
       setTableLoaders(props);
-    } catch(Exception ex) {
+        } catch (Exception ex) {
       FileBrowser filePnl = new FileBrowser();
       DBBrowser dbPnl = new DBBrowser();
-      tpane.addTab("File or URL",null,filePnl,"Access a table from a file or URL");
-      tpane.addTab("Database",null,dbPnl,"Access a table from a database");
+            tpane.addTab("File or URL", null, filePnl, "Access a table from a file or URL");
+            tpane.addTab("Database", null, dbPnl, "Access a table from a database");
       filePnl.addChangeListener(cl);
       dbPnl.addChangeListener(cl);
     }
@@ -116,19 +120,19 @@ public class LoadTable extends AbstractTableSource {
     Box mrgBox = new Box(BoxLayout.X_AXIS);
     mrgBox.add(mergeBtn);
     mrgBox.add(new JLabel(" as: "));
-    Box mtmBox =  new Box(BoxLayout.X_AXIS);
+        Box mtmBox = new Box(BoxLayout.X_AXIS);
     mtmBox.add(new JLabel(" into: "));
     mtmBox.add(mergeNameLabel);
-    mrgPnl.add(mrgBox,BorderLayout.WEST);
-    mrgPnl.add(mergeNameField,BorderLayout.CENTER);
-    mrgPnl.add(mtmBox,BorderLayout.EAST);
+        mrgPnl.add(mrgBox, BorderLayout.WEST);
+        mrgPnl.add(mergeNameField, BorderLayout.CENTER);
+        mrgPnl.add(mtmBox, BorderLayout.EAST);
 
     Box btnBox = new Box(BoxLayout.X_AXIS);
     btnBox.add(loadBtn);
     btnBox.add(new JLabel(" as: "));
-    loadPnl.add(btnBox,BorderLayout.WEST);
-    loadPnl.add(nameField,BorderLayout.CENTER);
-    loadPnl.add(cancelBtn,BorderLayout.EAST);
+        loadPnl.add(btnBox, BorderLayout.WEST);
+        loadPnl.add(nameField, BorderLayout.CENTER);
+        loadPnl.add(cancelBtn, BorderLayout.EAST);
 
     btnPnl.add(mrgPnl, BorderLayout.NORTH);
     btnPnl.add(loadPnl, BorderLayout.SOUTH);
@@ -182,13 +186,13 @@ public class LoadTable extends AbstractTableSource {
       StringTokenizer st = new StringTokenizer(ids);
       while (st.hasMoreTokens()) {
         String id = st.nextToken();
-        String className = properties.getProperty(id+".class");
-        String depends = properties.getProperty(id+".classdependency");
-        String libdepends = properties.getProperty(id+".libdependency");
+                String className = properties.getProperty(id + ".class");
+                String depends = properties.getProperty(id + ".classdependency");
+                String libdepends = properties.getProperty(id + ".libdependency");
         if (depends != null) {
           String depClass = "";
           try {
-            for (StringTokenizer stk = new StringTokenizer(depends); stk.hasMoreTokens(); ) {
+                        for (StringTokenizer stk = new StringTokenizer(depends); stk.hasMoreTokens();) {
               depClass = stk.nextToken();
               Class.forName(depClass);
             }
@@ -306,7 +310,7 @@ public class LoadTable extends AbstractTableSource {
               setSuperTableSource(getTableModel(), nameField.getText());
               mtm = null;
               mergeNameLabel.setText(""); 
-              dialog.setVisible(false);
+                                dialog.hide();
             } catch (Exception ex) {
             }
           }
@@ -353,6 +357,18 @@ public class LoadTable extends AbstractTableSource {
             }
           }
         });
+            dialog.addWindowListener(new WindowAdapter() {
+
+                @Override
+                public void windowClosing(WindowEvent we) {
+                   try {
+                        mtm = null;
+                        setTableSource(null, "");
+                        dialog.hide();
+                    } catch (Exception ex) {
+                    } 
+                }
+            });
       dialog.getContentPane().setLayout(new BorderLayout());
       dialog.getContentPane().add(this);
       dialog.pack();
