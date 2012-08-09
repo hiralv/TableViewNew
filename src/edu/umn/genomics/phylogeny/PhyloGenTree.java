@@ -14,6 +14,7 @@ import java.awt.Container;
 import java.awt.Window;
 import edu.umn.genomics.component.SaveImage;
 import edu.umn.genomics.component.SavePDF;
+import edu.umn.genomics.table.ExceptionHandler;
 
 public class PhyloGenTree extends JPanel {  
   // file menu // load, save, image, pdf
@@ -73,6 +74,7 @@ public class PhyloGenTree extends JPanel {
               try {
                 loadTree(fc.getSelectedFile().getCanonicalPath());
               } catch (IOException ioex) {
+                  ExceptionHandler.popupException(""+ioex);
               }
             }
           }
@@ -94,7 +96,7 @@ public class PhyloGenTree extends JPanel {
                 loadTree(path);
               }
             } catch (Exception ex) {
-              System.err.println(ex);
+                ExceptionHandler.popupException(""+ex);
             }
           }
         });
@@ -122,10 +124,10 @@ public class PhyloGenTree extends JPanel {
         BufferedReader in = new BufferedReader(new InputStreamReader(is));
         return in;
       } catch (Exception se) {
-        //System.err.println("URL.openStream(): " + se);
+        ExceptionHandler.popupException(""+se);
       }
     }  catch (Exception ue) {
-      //System.err.println("new URL: " + ue);
+      ExceptionHandler.popupException(""+ue);
     }
     // local file?
     try {
@@ -151,7 +153,7 @@ public class PhyloGenTree extends JPanel {
           //System.err.println("local file: " + path);
           return in;
         } catch (Exception rte) {
-          System.err.println(rte);
+          ExceptionHandler.popupException(""+rte);
         }
       }
       //System.err.println(e);
@@ -172,11 +174,7 @@ public class PhyloGenTree extends JPanel {
         treeListModel.addElement(new NamedNode(title, tn)); 
       }
     } catch (Exception ex) {
-      System.err.println(" open tree " + ex);
-      JOptionPane.showMessageDialog(this.getTopLevelAncestor(),
-                                     ex,
-                                     "Unable to load tree",
-                                     JOptionPane.ERROR_MESSAGE);
+      ExceptionHandler.popupException(""+ex);
     }
     return trees;
   }
@@ -209,8 +207,7 @@ public class PhyloGenTree extends JPanel {
               try {
                 SaveImage.saveImage(comp);
               } catch (IOException ioex) {
-                JOptionPane.showMessageDialog(comp, ioex.toString(), "Save Image",
-                  JOptionPane.ERROR_MESSAGE);
+                ExceptionHandler.popupException(""+ioex);
               }
             }
           }
@@ -231,8 +228,7 @@ public class PhyloGenTree extends JPanel {
               try {
                 SavePDF.savePDF(comp);
               } catch (IOException ioex) {
-                JOptionPane.showMessageDialog(comp, ioex.toString(), "Save PDF",
-                  JOptionPane.ERROR_MESSAGE);
+                ExceptionHandler.popupException(""+ioex);
               }
             }
           }

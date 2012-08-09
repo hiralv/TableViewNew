@@ -6,6 +6,7 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import javax.swing.tree.*;
+import edu.umn.genomics.table.ExceptionHandler;
 
 class Debug {
   public static boolean isOn = false;
@@ -227,7 +228,7 @@ public class NewickReader {
                 ParsePosition pp = new ParsePosition(0);
                 val = dfmt.parse(ns,pp).doubleValue();
               } catch (Exception ex) {
-                System.err.println("Failed to parse " + st.sval + " " + ex);
+               ExceptionHandler.popupException("Failed to parse " + st.sval + " " + ex);
               }
             } 
           }

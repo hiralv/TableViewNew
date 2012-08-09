@@ -12,6 +12,7 @@ import javax.swing.event.*;
 import edu.umn.genomics.graph.*;
 import edu.umn.genomics.graph.swing.*;
 import edu.umn.genomics.component.FontChooser;
+import edu.umn.genomics.table.ExceptionHandler;
 
 public class PhyloTree extends JPanel {  
   TreeModel treeModel;
@@ -278,6 +279,7 @@ public class PhyloTree extends JPanel {
           loc.y += 5;
           jf.setLocation(loc);
         } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
         }
         PhyloGenTree.setViewToolBar(jf,inset.getGraph().getGraphDisplay(),null);
         jf.setVisible(true);
@@ -288,6 +290,7 @@ public class PhyloTree extends JPanel {
         try {
           ((Window)inset.getTopLevelAncestor()).dispose();
         } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
         }
       }
     }
