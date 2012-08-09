@@ -21,29 +21,26 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
-import java.io.*;
-import java.net.*;
+import edu.umn.genomics.bi.dbutil.DBAccountListModel;
+import edu.umn.genomics.bi.dbutil.DBConnectParams;
+import edu.umn.genomics.bi.dbutil.DBUser;
+import edu.umn.genomics.file.OpenInputSource;
 import java.awt.*;
-import java.lang.reflect.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.*;
-import java.util.prefs.*;
-//import java.awt.print.*; //PrintJob
-import java.awt.event.*;
+import java.util.prefs.InvalidPreferencesFormatException;
+import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.table.*;
+import javax.swing.table.TableModel;
 import javax.swing.tree.*;
-import edu.umn.genomics.bi.dbutil.*;
-import edu.umn.genomics.table.dv.*;
-import edu.umn.genomics.table.cluster.*;
-import edu.umn.genomics.component.SaveImage;
-import edu.umn.genomics.file.OpenInputSource;
-
 
 // interfaces:
 // CellMap.java:			public interface CellMap {
@@ -62,7 +59,6 @@ import edu.umn.genomics.file.OpenInputSource;
 // ColorArray.java:		public interface ColorArray {
 // CoordinateArray.java:		public interface CoordinateArray {
 // CoordinateMap.java:		public interface CoordinateMap {
-
 /**
  * TableView displays the values of a table in several complementary views. 
  * The views provide a means to select a set of rows of the table that 
@@ -73,17 +69,18 @@ import edu.umn.genomics.file.OpenInputSource;
  * @version $Revision: 1.51 $ $Date: 2004/08/02 20:23:46 $  $Name: TableView1_3 $ 
  * @since        1.0
  */
-
-public class TableView extends JPanel implements Serializable
-                                                  //, Printable //PrintJob
+public final class TableView extends JPanel implements Serializable //, Printable //PrintJob
   {
   public static final String _revisionId = "$Id: TableView.java,v 1.51 2004/08/02 20:23:46 jj Exp $";
   // are we running with Java2:
-  boolean j2available = System.getProperty("java.specification.version").compareTo("1.2")>=0;  
+    boolean j2available = System.getProperty("java.specification.version").compareTo("1.2") >= 0;
   DefaultTableContext ctx = new DefaultTableContext();
   TreeModel tree = ctx.getTreeModel();
   JTree jtr = new JTree(tree);
+  TableViewPreferenceEditor preferenceFrame;
   class JTRenderer extends DefaultTreeCellRenderer {
+
+        @Override
     public Component getTreeCellRendererComponent(
                                   JTree tree,
                                   Object value,
@@ -97,29 +94,34 @@ public class TableView extends JPanel implements Serializable
                                   expanded, leaf, row,
                                   hasFocus);
       if (value != null && value instanceof DefaultMutableTreeNode) {
-        setIcon(ctx.getViewIcon((DefaultMutableTreeNode)value));
+                setIcon(ctx.getViewIcon((DefaultMutableTreeNode) value));
       }
       return this;
     }
   };
   TreeSelectionListener tsl = new TreeSelectionListener() {
+
     public void valueChanged(TreeSelectionEvent e) {
       try {
-        Object o = ((DefaultMutableTreeNode)e.getPath().getLastPathComponent()).getUserObject();
+                Object o = ((DefaultMutableTreeNode) e.getPath().getLastPathComponent()).getUserObject();
         treeSelect(o);
       } catch(Exception ex) {
       }
     }
   };
   TreeModelListener tml = new TreeModelListener() {
+
     public void treeNodesChanged(TreeModelEvent e) {
     }
+
     public synchronized void treeNodesInserted(TreeModelEvent e) {
       // Expand tree and set selection
       // Use SwingUtilities.invokeLater to do this in the GUI thread.
       final TreePath tp = e.getTreePath().pathByAddingChild(e.getChildren()[0]);
       Runnable selectNewNode = new Runnable() {
+
         TreePath treePath = tp;
+
         public void run() {
           jtr.setSelectionPath(null); 
           jtr.setSelectionPath(treePath); 
@@ -129,20 +131,23 @@ public class TableView extends JPanel implements Serializable
       };
       SwingUtilities.invokeLater(selectNewNode);
     }
+
     public synchronized void treeNodesRemoved(TreeModelEvent e) {
       // Select Item nearest to the deleted item
       // Use SwingUtilities.invokeLater to do this in the GUI thread.
       final TreePath tp = e.getTreePath();
       final int[] ci = e.getChildIndices();
       Runnable selectNextNode = new Runnable() {
+
         TreePath treePath = tp;
         int[] idx = ci;
+
         public void run() {
-          TreeNode pn = (TreeNode)treePath.getLastPathComponent();
+                    TreeNode pn = (TreeNode) treePath.getLastPathComponent();
           if (idx != null && idx.length > 0 && pn != null && pn.getChildCount() > 0) {
             int kc = pn.getChildCount();
             if (idx[0] > 0) {
-              jtr.setSelectionPath(treePath.pathByAddingChild(pn.getChildAt(idx[0]-1)));  
+                            jtr.setSelectionPath(treePath.pathByAddingChild(pn.getChildAt(idx[0] - 1)));
             } else {
               jtr.setSelectionPath(treePath.pathByAddingChild(pn.getChildAt(0)));
             }
@@ -155,24 +160,21 @@ public class TableView extends JPanel implements Serializable
       };
       SwingUtilities.invokeLater(selectNextNode);
     }
+
     public synchronized void treeStructureChanged(TreeModelEvent e) {
       jtr.repaint();
     }
   };
-
   // Entry panels
   final JFileChooser fc = new JFileChooser();
   LoadTable loadTable = null;
   JTextArea queryEntry = null;
   JTextArea selectedText = null;
-
   JSPanel scriptPanel = null;
-  JFrame  scriptFrame = null;
+    JFrame scriptFrame = null;
   BshPanel bshScriptPanel = null;
-  JFrame  bshScriptFrame = null;
-  TableViewPreferenceEditor preferenceFrame = null;
+    JFrame bshScriptFrame = null;
   // Views of the tablemodel
-
   SetOperatorPanel setOpPanel = new SetOperatorPanel();
   // Main panel Buttons
   JButton jColBtn = new JButton("Columns");
@@ -184,6 +186,7 @@ public class TableView extends JPanel implements Serializable
   // Threads
   Thread queryThread;
   ActionListener al = new ActionListener() {
+
     public void actionPerformed(ActionEvent e) {
       displayTableModelView(e.getActionCommand());
     }
@@ -191,8 +194,8 @@ public class TableView extends JPanel implements Serializable
 
   private void treeSelect(Object o) {
     if (o instanceof JFrame) {
-      JFrame jf = (JFrame)o;
-      jf.setExtendedState(jf.getExtendedState()&(~Frame.ICONIFIED));
+            JFrame jf = (JFrame) o;
+            jf.setExtendedState(jf.getExtendedState() & (~Frame.ICONIFIED));
       jf.toFront();
     } else if (o instanceof TableModel) {
 //System.err.println("Select " + o.toString());
@@ -201,21 +204,21 @@ public class TableView extends JPanel implements Serializable
 
   private Map getScriptVars() {
       Hashtable vars = new Hashtable();
-      vars.put("tableView",this);
-      vars.put("tv",this);
-      vars.put("tableContext",this.getTableContext());
-      vars.put("ctx",this.getTableContext());
-      vars.put("Cells",new Cells());
+        vars.put("tableView", this);
+        vars.put("tv", this);
+        vars.put("tableContext", this.getTableContext());
+        vars.put("ctx", this.getTableContext());
+        vars.put("Cells", new Cells());
       return vars;
   }
 
   private JSPanel getScriptPanel() throws IOException {
       Hashtable vars = new Hashtable();
-      vars.put("tableView",this);
-      vars.put("tv",this);
-      vars.put("tableContext",this.getTableContext());
-      vars.put("ctx",this.getTableContext());
-      vars.put("Cells",new Cells());
+        vars.put("tableView", this);
+        vars.put("tv", this);
+        vars.put("tableContext", this.getTableContext());
+        vars.put("ctx", this.getTableContext());
+        vars.put("Cells", new Cells());
       JSPanel jsPnl = new JSPanel(vars);
       return jsPnl;
   }
@@ -234,7 +237,6 @@ public class TableView extends JPanel implements Serializable
     }
     scriptFrame.setVisible(true);
   }
-
 
   public void showBshScriptWindow() {
     if (bshScriptFrame == null) {
@@ -289,7 +291,7 @@ public class TableView extends JPanel implements Serializable
 
     setLayout(new BorderLayout());
 
-    add(mb,BorderLayout.NORTH);
+        add(mb, BorderLayout.NORTH);
 
     JPanel ppnl = this;
     JPanel pnl;
@@ -298,7 +300,7 @@ public class TableView extends JPanel implements Serializable
     if (true) {
       pnl = new JPanel(new BorderLayout());
       tb = getEditToolBar();
-      pnl.add( tb, BorderLayout.NORTH);
+            pnl.add(tb, BorderLayout.NORTH);
       ppnl.add(pnl);
       ppnl = pnl;
     }
@@ -306,18 +308,18 @@ public class TableView extends JPanel implements Serializable
     if (true) {
       pnl = new JPanel(new BorderLayout());
       tb = getViewToolBar();
-      pnl.add( tb, BorderLayout.NORTH);
+            pnl.add(tb, BorderLayout.NORTH);
       ppnl.add(pnl);
       ppnl = pnl;
     }
 
     JPanel setPanel = new JPanel(new BorderLayout()); 
     JToolBar stb = getSetToolBar();
-    setPanel.add(stb,BorderLayout.NORTH);
+        setPanel.add(stb, BorderLayout.NORTH);
     ppnl.add(setPanel);
     
     JScrollPane jtrsp = new JScrollPane(jtr);
-    setPanel.add(jtrsp,BorderLayout.CENTER);
+        setPanel.add(jtrsp, BorderLayout.CENTER);
 
   }
 
@@ -332,6 +334,7 @@ public class TableView extends JPanel implements Serializable
 
   /**
    * Create a TableView panel for the given file containing a table of data.
+     *
    * @param filename the data table file to view.
    */
   public TableView(String filename) {
@@ -350,7 +353,6 @@ public class TableView extends JPanel implements Serializable
     jtr.setModel(tree);
   }
 */
-
   /**
    *  Return the TableContext from which an application can 
    *  retrieve associated the ListSelectionModel for a TableModel.
@@ -360,14 +362,14 @@ public class TableView extends JPanel implements Serializable
     return ctx;
   }
 
-  private LoadTable getLoadTable() {
+    public LoadTable getLoadTable() {
     if (loadTable == null) {
       loadTable = new LoadTable();
     }
     return loadTable;
   }
 
-  private JMenuBar getJMenuBar() {
+    private JMenuBar getJMenuBar(){
     JMenuBar mb = new JMenuBar();
     JMenuItem mi;
     JMenu fileMenu = new JMenu("File");
@@ -409,8 +411,9 @@ public class TableView extends JPanel implements Serializable
 
         mi = (JMenuItem)fileMenu.add(new JMenuItem("output selection"));
         mi.setMnemonic('o');
-        mi.getAccessibleContext().setAccessibleDescription("output selectiont");
+        mi.getAccessibleContext().setAccessibleDescription("Output Selection");
         mi.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
               writeSelection(System.out);
             }
@@ -571,6 +574,56 @@ public class TableView extends JPanel implements Serializable
       }
 
     mb.add(viewMenu);
+        JMenu helpMenu = new JMenu("Help");
+        helpMenu.setMnemonic('h');
+        mi = (JMenuItem) helpMenu.add(new JMenuItem("TableView User's Guide" ));
+        mi.setMnemonic('g');
+        mi.setActionCommand("TableView User's Guide");
+        mi.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent ae) {
+                String link = "http://wiki.transvar.org/confluence/x/8IfTAQ";
+                browse(link);
+            }
+        });
+        mi.getAccessibleContext().setAccessibleDescription("TableView User's Guide");
+        mi = (JMenuItem) helpMenu.add(new JMenuItem("Get Help"));
+        mi.setMnemonic('t');
+        mi.getAccessibleContext().setAccessibleDescription("Get Help");
+        mi.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent ae) {
+                String link = "http://wiki.transvar.org/confluence/x/RIjTAQ";
+                browse(link);
+            }
+        });
+        JMenu tutorialMenu = new JMenu("Tutorials");
+        mi = (JMenuItem) tutorialMenu.add(new JMenuItem("Using TableView to view expression data from CressExpress"));
+        mi.setMnemonic('c');
+        mi.getAccessibleContext().setAccessibleDescription("Using TableView to view expression data from CressExpress");
+        mi.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent ae) {
+                String link = "http://wiki.transvar.org/confluence/x/9IfTAQ";
+                browse(link);
+            }
+        });
+        mi = (JMenuItem) tutorialMenu.add(new JMenuItem("Using TableView with Integrated Genome Browser"));
+        mi.setMnemonic('i');
+        mi.getAccessibleContext().setAccessibleDescription("Using TableView with Integrated Genome Browser");
+        mi.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent ae) {
+                String link = "http://wiki.transvar.org/confluence/x/R4jTAQ";
+                browse(link);
+            }
+        });
+        helpMenu.add(tutorialMenu);
+        mi = (JMenuItem) helpMenu.add(new JMenuItem("Show Console" ));
+        mi.setMnemonic('s');
+        mi.getAccessibleContext().setAccessibleDescription("Show Console");
+        mi.addActionListener(new ConsoleView());
+        mb.add(helpMenu);
     return mb;
   }
 
@@ -666,6 +719,19 @@ public class TableView extends JPanel implements Serializable
     ctx.setViewToolBar(frame,text); 
     frame.setVisible(true);
   }
+
+    private void browse(String link) {
+        try {
+            URI u = new URI(link);
+            if ("file".equalsIgnoreCase(u.getScheme())) {
+                Desktop.getDesktop().open(new File(u));
+                return;
+            }
+            Desktop.getDesktop().browse(u);
+        } catch (IOException ex) {            
+        } catch (URISyntaxException ex) {
+        }
+    }
 
   /**
    * Open a view on the current TableModel.
@@ -2110,4 +2176,99 @@ public class TableView extends JPanel implements Serializable
       }
     }
   }
+}
+
+class ConsoleView implements ActionListener {
+
+    static final String encoding;
+    static {
+        String enc = System.getProperty("file.encoding");
+        encoding = enc == null || enc.isEmpty() ? "UTF-8" : enc;
+    }
+    
+    private JFrame frame;
+
+    public void actionPerformed(ActionEvent e) {
+        if (frame == null) {
+            init();
+        }
+        frame.doLayout();
+        frame.repaint();
+        toFront();
+    }
+
+    private void init() {
+        frame = new JFrame("Tableview Console");
+        Container cpane = frame.getContentPane();
+        cpane.setLayout(new BorderLayout());
+        JTextArea outArea = new JTextArea(20, 50);
+        outArea.setEditable(false);
+        JScrollPane outPane = new JScrollPane(outArea,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        try {
+            // Send err to same text area as out
+            // (But we could send err to a separate text area.)
+            System.setOut(new PrintStream(new JTextAreaOutputStream(outArea, System.out), false, encoding));
+            System.setErr(new PrintStream(new JTextAreaOutputStream(outArea, System.err), false, encoding));
+        } catch (UnsupportedEncodingException ex) {           
+        } catch (SecurityException se) {
+            // This exception should not occur with WebStart, but I'm handling it anyway.
+            String str = "The application may not have permission to re-direct output "
+                    + "to this view on your system.  "
+                    + "\n"
+                    + "You should be able to view output in the Java console, WebStart console, "
+                    + "or wherever you normally would view program output.  "
+                    + "\n\n";
+            outArea.append(str);
+        }
+        cpane.add(outPane, BorderLayout.CENTER);
+        frame.pack();
+    }
+
+    private void toFront() {
+        if ((frame.getExtendedState() & Frame.ICONIFIED) == Frame.ICONIFIED) {
+            // de-iconify it while leaving the maximized/minimized state flags alone
+            frame.setExtendedState(frame.getExtendedState() & ~Frame.ICONIFIED);
+        }
+        if (!frame.isShowing()) {
+            frame.setVisible(true);
+        }
+        frame.toFront();
+    }
+
+    private static class JTextAreaOutputStream extends OutputStream {
+        private static final Charset charset = Charset.forName(encoding);
+        JTextArea ta;
+        PrintStream original;
+
+        /**
+         * Creates an OutputStream that writes to the given JTextArea.
+         *
+         * @param echo Can be null, or a PrintStream to which a copy of all
+         * output will also by written. Thus you can send System.out to a text
+         * area and also still send an echo to the original System.out.
+         */
+        public JTextAreaOutputStream(JTextArea t, PrintStream echo) {
+            this.ta = t;
+            this.original = echo;
+        }
+
+        public void write(int b) throws IOException {
+            write(new byte[]{(byte) b}, 0, 1);
+        }
+
+        @Override
+        public void write(byte b[]) throws IOException {
+            write(b, 0, b.length);
+        }
+
+        @Override
+        public void write(byte b[], int off, int len) throws IOException {
+            ta.append(new String(b, off, len, charset));
+            if (original != null) {
+                original.write(b, off, len);
+            }
+        }
+    }
 }
