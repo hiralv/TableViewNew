@@ -210,6 +210,7 @@ public class ClutoColumnMap extends AbstractColumnMap
     try {
       return (double)((ClutoTableMatrix)tm).getValue(row,colIndex);
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     return Double.NaN;
   }

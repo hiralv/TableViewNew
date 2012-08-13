@@ -171,8 +171,7 @@ public class ClutoMatrixView extends JPanel implements CleanUp, Serializable {
           setToolTipText(value != null ? value.toString() : null);
           setValue(null);
         } catch (Exception ex) {
-          System.err.println(value + "  " + ex);
-          ex.printStackTrace();
+                ExceptionHandler.popupException(""+ex);
           setValue(value);
         }
         super.setBackground(bg);
@@ -371,6 +370,7 @@ public class ClutoMatrixView extends JPanel implements CleanUp, Serializable {
             try {
              setRowHeight( ((Number)DoSpinner.getValue(e.getSource())).intValue() );
             } catch (Exception ex) {
+                        ExceptionHandler.popupException(""+ex);
             }
           }
         };
@@ -382,6 +382,7 @@ public class ClutoMatrixView extends JPanel implements CleanUp, Serializable {
             try {
              setColumnWidth( ((Number)DoSpinner.getValue(e.getSource())).intValue() );
             } catch (Exception ex) {
+                        ExceptionHandler.popupException(""+ex);
             }
           }
         };
@@ -398,6 +399,7 @@ public class ClutoMatrixView extends JPanel implements CleanUp, Serializable {
 
       ctrl.add(sCtrl, BorderLayout.NORTH);
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
 
     ctrl.add(labelChoice,BorderLayout.EAST);
@@ -472,6 +474,7 @@ public class ClutoMatrixView extends JPanel implements CleanUp, Serializable {
       validate();
       repaint();
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
   }
 
