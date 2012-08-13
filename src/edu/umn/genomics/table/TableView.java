@@ -79,6 +79,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
   TreeModel tree = ctx.getTreeModel();
   JTree jtr = new JTree(tree);
   TableViewPreferenceEditor preferenceFrame;
+  ClassLoader loader = TableView.class.getClassLoader();
   class JTRenderer extends DefaultTreeCellRenderer {
 
         @Override
@@ -373,7 +374,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
     JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('f');
 
-        mi = (JMenuItem)fileMenu.add(new JMenuItem("Load Table"));
+        mi = (JMenuItem)fileMenu.add(new JMenuItem("Load Table" , getIcon("edu/umn/genomics/table/Icons/Import16.gif")));
         mi.setMnemonic('l');
         mi.getAccessibleContext().setAccessibleDescription("Load Table");
         mi.addActionListener(new ActionListener() {
@@ -386,7 +387,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
             }
         });
 
-        mi = (JMenuItem)fileMenu.add(new JMenuItem("Save Selection"));
+        mi = (JMenuItem)fileMenu.add(new JMenuItem("Save Selection" , getIcon("edu/umn/genomics/table/Icons/SaveAs16.gif")));
         mi.setMnemonic('s');
         mi.getAccessibleContext().setAccessibleDescription("Save Selection");
         mi.addActionListener(new ActionListener() {
@@ -406,7 +407,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
             }
         });
 
-        mi = (JMenuItem)fileMenu.add(new JMenuItem("Output Selection"));
+        mi = (JMenuItem)fileMenu.add(new JMenuItem("Output Selection" , getIcon("edu/umn/genomics/table/Icons/Edit16.gif")));
         mi.setMnemonic('o');
         mi.getAccessibleContext().setAccessibleDescription("Output Selection");
         mi.addActionListener(new ActionListener() {
@@ -436,7 +437,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
 
 
 
-        mi = (JMenuItem)fileMenu.add(new JMenuItem("Exit"));
+        mi = (JMenuItem)fileMenu.add(new JMenuItem("Exit" , getIcon("edu/umn/genomics/table/Icons/Stop16.gif")));
         mi.setMnemonic('x');
         mi.getAccessibleContext().setAccessibleDescription("Exit");
         mi.addActionListener(new ActionListener() {
@@ -462,7 +463,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
     JMenu editMenu = new JMenu("Edit");
         editMenu.setMnemonic('e');
 
-        mi = (JMenuItem)editMenu.add(new JMenuItem("Edit Table Columns"));
+        mi = (JMenuItem)editMenu.add(new JMenuItem("Edit Table Columns" , getIcon("edu/umn/genomics/table/Icons/TableEdit16.gif")));
         mi.setMnemonic('c');
         mi.getAccessibleContext().setAccessibleDescription("Edit Table Columns");
         mi.addActionListener(new ActionListener() {
@@ -505,7 +506,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
         sortGrp.add(mi);
         editMenu.add(defsort);
 
-        mi = (JMenuItem)editMenu.add(new JMenuItem("Create Table from Selected Rows"));
+        mi = (JMenuItem)editMenu.add(new JMenuItem("Create Table from Selected Rows" , getIcon("edu/umn/genomics/table/Icons/New16.gif")));
         mi.setMnemonic('s');
         mi.getAccessibleContext().setAccessibleDescription("Create Table from Selected Rows");
         mi.addActionListener(new ActionListener() {
@@ -514,7 +515,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
             }
         });
 
-        mi = (JMenuItem)editMenu.add(new JMenuItem("Create Aggregated Value Table"));
+        mi = (JMenuItem)editMenu.add(new JMenuItem("Create Aggregated Value Table" , getIcon("edu/umn/genomics/table/Icons/AlignJustify16.gif")));
         mi.setMnemonic('s');
         mi.getAccessibleContext().setAccessibleDescription("Create Aggregated Table by grouping Rows");
         mi.addActionListener(new ActionListener() {
@@ -523,7 +524,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
             }
         });
         
-        mi = (JMenuItem)editMenu.add(new JMenuItem("Delete item"));
+        mi = (JMenuItem)editMenu.add(new JMenuItem("Delete item" , getIcon("edu/umn/genomics/table/Icons/Remove16.gif")));
         mi.setMnemonic('d');
         mi.getAccessibleContext().setAccessibleDescription("Delete");
         mi.addActionListener(new ActionListener() {
@@ -532,7 +533,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
             }
         });
 
-        mi = (JMenuItem)editMenu.add(new JMenuItem("JavaScript Window"));
+        mi = (JMenuItem)editMenu.add(new JMenuItem("JavaScript Window" , getIcon("edu/umn/genomics/table/Icons/Movie16.gif")));
         mi.setMnemonic('j');
         mi.getAccessibleContext().setAccessibleDescription("JavaScript");
         mi.addActionListener(new ActionListener() {
@@ -541,7 +542,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
             }
         });
 
-        mi = (JMenuItem)editMenu.add(new JMenuItem("BeanShell Window"));
+        mi = (JMenuItem)editMenu.add(new JMenuItem("BeanShell Window" , getIcon("edu/umn/genomics/table/Icons/Bean16.gif")));
         mi.setMnemonic('j');
         mi.getAccessibleContext().setAccessibleDescription("BeanShell");
         mi.addActionListener(new ActionListener() {
@@ -550,7 +551,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
             }
         });
 
-        mi = (JMenuItem)editMenu.add(new JMenuItem("Edit Preferences"));
+        mi = (JMenuItem)editMenu.add(new JMenuItem("Edit Preferences" , getIcon("edu/umn/genomics/table/Icons/Preferences16.gif")));
         mi.setMnemonic('d');
         mi.getAccessibleContext().setAccessibleDescription("Edit Preferences");
         mi.addActionListener(new ActionListener() {
@@ -564,7 +565,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
       viewMenu.setMnemonic('v');
       String vn[] = ctx.getViewNames();
       for (int i = 0; i < vn.length; i++) {
-        mi = (JMenuItem)viewMenu.add(new JMenuItem(vn[i]));
+        mi = (JMenuItem)viewMenu.add(new JMenuItem(vn[i], ctx.getViewIcon16(vn[i])));
         mi.setActionCommand(vn[i]);
         //mi.setMnemonic('t');
         //mi.getAccessibleContext().setAccessibleDescription("Table");
@@ -574,7 +575,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
     mb.add(viewMenu);
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('h');
-        mi = (JMenuItem) helpMenu.add(new JMenuItem("TableView User's Guide" ));
+        mi = (JMenuItem) helpMenu.add(new JMenuItem("TableView User's Guide" , getIcon("edu/umn/genomics/table/Icons/Information16.gif")));
         mi.setMnemonic('g');
         mi.setActionCommand("TableView User's Guide");
         mi.addActionListener(new ActionListener() {
@@ -585,7 +586,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
             }
         });
         mi.getAccessibleContext().setAccessibleDescription("TableView User's Guide");
-        mi = (JMenuItem) helpMenu.add(new JMenuItem("Get Help"));
+        mi = (JMenuItem) helpMenu.add(new JMenuItem("Get Help" , getIcon("edu/umn/genomics/table/Icons/Help16.gif")));
         mi.setMnemonic('t');
         mi.getAccessibleContext().setAccessibleDescription("Get Help");
         mi.addActionListener(new ActionListener() {
@@ -596,6 +597,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
             }
         });
         JMenu tutorialMenu = new JMenu("Tutorials");
+        tutorialMenu.setIcon(getIcon("edu/umn/genomics/table/Icons/About16.gif"));
         mi = (JMenuItem) tutorialMenu.add(new JMenuItem("Using TableView to view expression data from CressExpress"));
         mi.setMnemonic('c');
         mi.getAccessibleContext().setAccessibleDescription("Using TableView to view expression data from CressExpress");
@@ -617,7 +619,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
             }
         });
         helpMenu.add(tutorialMenu);
-        mi = (JMenuItem) helpMenu.add(new JMenuItem("Show Console" ));
+        mi = (JMenuItem) helpMenu.add(new JMenuItem("Show Console" , getIcon("edu/umn/genomics/table/Icons/History16.gif")));
         mi.setMnemonic('s');
         mi.getAccessibleContext().setAccessibleDescription("Show Console");
         mi.addActionListener(new ConsoleView());
@@ -625,7 +627,26 @@ public final class TableView extends JPanel implements Serializable //, Printabl
     return mb;
   }
 
-  /** 
+  
+    public Icon getIcon(String path){
+        ImageIcon icon = null;
+	    try {
+	      java.net.URL url = TableView.class.getClassLoader().getResource(path);
+	      if (url != null) {
+	        icon = new ImageIcon(url);
+	      }
+	    } catch (Exception e) {
+	    	e.printStackTrace(System.out);
+	      // It isn't a big deal if we can't find the icon, just return null
+	    }
+	    if (icon == null || icon.getImageLoadStatus() == MediaTracker.ABORTED ||
+	        icon.getIconHeight() <= 0 || icon.getIconWidth() <= 0) {
+	      icon = null;
+	    }	    
+	    return icon; 
+    }
+    
+    /** 
    *  Return a toolbar with selection set operator choices
    */
   private JToolBar getSetToolBar() {
@@ -753,7 +774,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
   private JToolBar getEditToolBar() {
     JToolBar tb = new JToolBar();
     JButton btn;
-    ClassLoader cl = this.getClass().getClassLoader();
+        ClassLoader cl = this.getClass().getClassLoader();
 
     // ImageIcon icon = null;
     ImageIcon icon = null;

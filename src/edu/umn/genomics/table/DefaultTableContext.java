@@ -382,6 +382,11 @@ System.err.println(" <<<< ColumnMaps " + e.getSource());
    * @param viewClass The viewing class.
    * @return the icon for this view.
    */
+  public Icon getViewIcon16(Class viewClass){
+      Icon icon = getViewIcon(viewClass, viewIcons16);
+      return icon;
+  }
+  
   public Icon getViewIcon(Class viewClass) {
     Icon icon = getViewIcon(viewClass, viewIcons24);
     // if (icon == null)
@@ -409,6 +414,9 @@ System.err.println(" <<<< ColumnMaps " + e.getSource());
     return getViewIcon((Class)views.get(viewName));
   }
 
+  public Icon getViewIcon16(String viewName) {
+    return getViewIcon16((Class)views.get(viewName));
+  }
   /**
    * Get an icon for a view.
    * @param treeNode The tree node for the view.
