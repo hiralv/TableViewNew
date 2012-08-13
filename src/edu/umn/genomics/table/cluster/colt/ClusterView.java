@@ -131,10 +131,12 @@ public class ClusterView extends AbstractTableModelView
         return o != null ? o.toString() : "";
       }  
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex); 
     }
     try {
       label = Integer.toString((int)value);
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     return label;
   }
@@ -272,8 +274,10 @@ public class ClusterView extends AbstractTableModelView
     super();
     try {
     init();
-    } catch (Exception ex) {ex.printStackTrace();}
+        } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
   }
+    }
 
   /**
    * Constructs a ClusterView diaplay which is initialized with
@@ -345,7 +349,8 @@ public class ClusterView extends AbstractTableModelView
           if (clusterThread != null) {  
             try {
               clusterThread.interrupt();
-            } catch(Exception ex) {
+                    } catch (Exception ex) {
+                        ExceptionHandler.popupException(""+ex);
             } finally {
             }
           } 
@@ -464,7 +469,7 @@ public class ClusterView extends AbstractTableModelView
                 this.cancel();
               }
             } catch (Exception ex) {
-                System.err.println("clusterThread timer " + ex);
+                            ExceptionHandler.popupException(""+ex);
             }
             progressBar.setValue(progressBar.getMaximum() - av.getRemainingCount());
           }
@@ -853,9 +858,7 @@ public class ClusterView extends AbstractTableModelView
      jf.pack();
      jf.setVisible(true);
    } catch (Exception ex) {
-     System.err.println("" + ex);
+            ExceptionHandler.popupException(""+ex);
    }
   }
 }
-
-

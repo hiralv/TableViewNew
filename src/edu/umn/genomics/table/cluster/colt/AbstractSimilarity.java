@@ -126,7 +126,8 @@ public abstract class AbstractSimilarity implements ClusterSimilarity {
       while (cmap.getState() == CellMap.MAPPING)  {
         try {
           Thread.sleep(100);
-        } catch(Exception ex) {
+                } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
           break;
         }
       }
