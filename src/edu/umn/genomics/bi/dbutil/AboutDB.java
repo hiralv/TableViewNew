@@ -65,7 +65,7 @@ public class AboutDB {
                         && m[i].getParameterTypes().length == 0) {
         cols = new Vector(2);
         cols.add(m[i].getName());
-                    cols.add(m[i].invoke(dbmd, null));
+                    cols.add(m[i].invoke(dbmd, (Object[])null));
         rows.add(cols);
       }
      } catch (Throwable ex) {
