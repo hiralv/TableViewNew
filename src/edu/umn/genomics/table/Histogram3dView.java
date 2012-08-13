@@ -21,8 +21,6 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
 import java.io.Serializable;
@@ -318,6 +316,7 @@ public class Histogram3dView extends AbstractTableModelView
           validate();
           repaint();
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     }
@@ -335,8 +334,7 @@ public class Histogram3dView extends AbstractTableModelView
           hgm.setBinModel(1,new ColumnMapBinModel(yMap));
         }
       } catch (Exception ex) {
-        System.err.println("Histogram3dView.setColumns() " + ex);
-        ex.printStackTrace();
+                ExceptionHandler.popupException(""+ex);
       }
       repaint();
     }

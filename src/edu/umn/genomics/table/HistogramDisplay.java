@@ -21,19 +21,17 @@
  * GNU General Public License for more details.
  *
  */
-
-
 package edu.umn.genomics.table;
-import java.io.Serializable;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.text.DecimalFormat;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
+
 import edu.umn.genomics.graph.*;
-import edu.umn.genomics.graph.swing.*;
+import edu.umn.genomics.graph.swing.SimpleGraph;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JPanel;
 
 public class HistogramDisplay extends JPanel {
   SetOperator setOperator = new DefaultSetOperator();
@@ -227,6 +225,7 @@ public class HistogramDisplay extends JPanel {
       try {
         calcPoints(x,y,axes);
       } catch (Exception ex) {
+                ExceptionHandler.popupException(""+ex);
         repaint();
       }
     }
@@ -283,7 +282,4 @@ public class HistogramDisplay extends JPanel {
     }
     return xpos;
   }
-
 }
-
-

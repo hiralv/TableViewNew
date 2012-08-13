@@ -154,7 +154,7 @@ public class TableViewPreferenceEditor extends JFrame  {
             try {
               ((JFrame)((JButton)e.getSource()).getTopLevelAncestor()).dispose();
             } catch (Exception ex) {
-              ex.printStackTrace();
+              ExceptionHandler.popupException(""+ex);
             }
           }
         }
@@ -169,7 +169,7 @@ public class TableViewPreferenceEditor extends JFrame  {
             try {
               setDefaultPreferences();
             } catch (Exception ex) {
-              ex.printStackTrace();
+              ExceptionHandler.popupException(""+ex);
             }
           }
         }

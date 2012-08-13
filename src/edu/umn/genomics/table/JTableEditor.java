@@ -21,19 +21,19 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import javax.swing.border.*;
-import java.sql.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -198,7 +198,7 @@ public class JTableEditor extends AbstractTableSource {
       insRowIcon = new ImageIcon(cl.getResource("edu/umn/genomics/table/Icons/RowInsertBefore24.gif"));
       delRowIcon = new ImageIcon(cl.getResource("edu/umn/genomics/table/Icons/RowDelete24.gif"));
     } catch (Exception ex) {
-      System.err.println("" + ex);
+            ExceptionHandler.popupException(""+ex);
     }
 
     newTblBtn = newTblIcon != null ? new JButton(newTblIcon) : new JButton("New Table");

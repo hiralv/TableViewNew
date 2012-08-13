@@ -165,7 +165,7 @@ public class ScatterPlotIcons extends AbstractTableModelView
       Font font = new Font("Serif",Font.PLAIN, 8);
       //setFont(font);
     } catch (Exception ex) {
-      System.err.println(ex);
+            ExceptionHandler.popupException(""+ex);
     } 
     JPanel iP1 = new JPanel(new BorderLayout());
     iP1.add(iconPanel,BorderLayout.NORTH);
@@ -350,11 +350,13 @@ public class ScatterPlotIcons extends AbstractTableModelView
     while (iconQueue != null && iconQueue.size() > 0) {
       try {
         for (Iterator i = iconQueue.iterator(); i.hasNext();) {
-          JButton b = (JButton)i.next();
-          if (updateIcon(b))
+                    JButton b = (JButton) i.next();
+                    if (updateIcon(b)) {
             i.remove();
         }
+                }
       } catch (ConcurrentModificationException ex) {
+                ExceptionHandler.popupException(""+ex);
       }
       if (iconQueue.size() > 0) {
         Thread.yield();
@@ -420,6 +422,7 @@ public class ScatterPlotIcons extends AbstractTableModelView
           // this should be more general
           pix[i] = 0x8888ff - ((pix[i]/2)&0xffff00);
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     }

@@ -50,7 +50,7 @@ public class PreferenceTableModel extends DefaultTableModel {
     try {
       cl.loadClass("edu.umn.genomics.table.TableViewPreferences");
     } catch (Exception ex) {
-      ex.printStackTrace();
+      ExceptionHandler.popupException(""+ex);
     }
     Vector dataVector = new Vector();
     prefs = Preferences.userNodeForPackage(this.getClass());
@@ -69,8 +69,7 @@ public class PreferenceTableModel extends DefaultTableModel {
           dataVector.add(row); 
         } 
       } catch (Exception ex) {
-        ex.printStackTrace();
-        //System.err.println(ex.toString());
+        ExceptionHandler.popupException(""+ex);
       }
     }
     setDataVector(dataVector,new Vector(Arrays.asList(columns)));

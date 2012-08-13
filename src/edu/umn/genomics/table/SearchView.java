@@ -21,18 +21,21 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.Serializable;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.util.Vector;
 import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableModel;
 
 /**
  * SearchView provides common TableModel View elements.
@@ -213,11 +216,7 @@ public class SearchView extends AbstractTableModelView
           return;
         }
     } catch (Exception ex) {
-      String s = pattern == null ? "" : (" for " + pattern);
-      JOptionPane.showMessageDialog(getTopLevelAncestor(),
-                                     ex,
-                                     "Search Failed" + s,
-                                     JOptionPane.ERROR_MESSAGE);
+            ExceptionHandler.popupException(""+ex);
     }
   }
 

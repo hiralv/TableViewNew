@@ -217,6 +217,7 @@ class CBRenderer extends DefaultTreeCellRenderer {
       }
     } catch (Exception ex) {
       tNode.setUserObject("Tables" + ex);
+      ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -278,6 +279,7 @@ System.err.println("done");
           repaint();
         } catch (Exception ex) {
           tn.setUserObject(ex);
+          ExceptionHandler.popupException(""+ex);
         }
       }
 
@@ -371,6 +373,7 @@ System.err.println("done");
         Object o = ((DefaultMutableTreeNode)e.getPath().getLastPathComponent()).getUserObject();
         // treeSelect(o);
       } catch(Exception ex) {
+          ExceptionHandler.popupException(""+ex);
       }
     }
   };
@@ -383,6 +386,7 @@ System.err.println("done");
       // cancel Statements
       conn.close();
     } catch (Exception ex) {
+        ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -398,6 +402,7 @@ System.err.println("done");
       JScrollPane jsp = new JScrollPane(dbtree);
       add(jsp);
     } catch (Exception ex) {
+        ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -417,6 +422,7 @@ System.err.println("done");
           try {
             ((Window)((JComponent)e.getSource()).getTopLevelAncestor()).dispose();
           } catch (Exception ex) {
+              ExceptionHandler.popupException(""+ex);
           }
         }
       }

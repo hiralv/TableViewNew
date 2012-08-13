@@ -21,8 +21,6 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
 import java.io.Serializable;
@@ -33,21 +31,33 @@ import javax.swing.table.*;
 import java.text.*;
 
 /**
- * Presents a set of TableModels which have identical columnClasses 
- * as a single TableModel.
- * @author       J Johnson
- * @version $Revision: 1.3 $ $Date: 2004/08/12 21:00:03 $  $Name: TableView1_3 $ 
- * @since        1.0
- * @see  javax.swing.table.TableModel
+ * Presents a set of TableModels which have identical columnClasses as a single
+ * TableModel.
+ *
+ * @author J Johnson
+ * @version $Revision: 1.3 $ $Date: 2004/08/12 21:00:03 $ $Name: TableView1_3_2
+ * $
+ * @since 1.0
+ * @see javax.swing.table.TableModel
  */
-public class MergeTableModel extends AbstractTableModel  implements TableModelListener {
-  /** Add an initial column that identifies the table this row is from. */
+public class MergeTableModel extends AbstractTableModel implements TableModelListener {
+
+    /**
+     * Add an initial column that identifies the table this row is from.
+     */
   static String TABLE_COLUMN_NAME = "TableName";
-  /** A count of added initial columns. */
+    /**
+     * A count of added initial columns.
+     */
   static int PSEUDO_COLUMNS = 1;
-  /** A list of table that comprise this set. */
+    /**
+     * A list of table that comprise this set.
+     */
   Vector table = new Vector();
-  /** The offset to the first row of each table, allows for tables of differing row counts. */
+    /**
+     * The offset to the first row of each table, allows for tables of differing
+     * row counts.
+     */
   int[] tableRowOffsets = null; // length is the number of tables + 1 
 
   /** 

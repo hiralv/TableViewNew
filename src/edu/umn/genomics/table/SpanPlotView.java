@@ -223,6 +223,7 @@ public class SpanPlotView extends AbstractTableModelView
           validate();
           repaint();
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     }
@@ -246,8 +247,7 @@ public class SpanPlotView extends AbstractTableModelView
           }
         }
       } catch (Exception ex) {
-        System.err.println("SpanPlotView.setColumns() " + ex);
-        ex.printStackTrace();
+                ExceptionHandler.popupException(""+ex);
       }
       repaint();
     }

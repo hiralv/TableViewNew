@@ -246,9 +246,9 @@ public class ParallelCoordinatePanel extends AbstractTableModelView
     public Dimension getPreferredSize() {
       try {
         FontMetrics fm = getGraphics().getFontMetrics();  
-        return new Dimension(24,fm.getHeight()+4);
-      } catch(Exception ex) {
-        System.err.println("ColLbl.getPreferredSize " + ex);
+                return new Dimension(24, fm.getHeight() + 4);
+            } catch (Exception ex) {
+                ExceptionHandler.popupException(""+ex);
       }
       return new Dimension(24,24);
     }
@@ -380,9 +380,9 @@ public class ParallelCoordinatePanel extends AbstractTableModelView
     public Dimension getPreferredSize() {
       try {
         FontMetrics fm = getGraphics().getFontMetrics();  
-        return new Dimension(fm.getHeight(),24);
-      } catch(Exception ex) {
-        System.err.println("ColVal.getPreferredSize " + ex);
+                return new Dimension(fm.getHeight(), 24);
+            } catch (Exception ex) {
+                ExceptionHandler.popupException(""+ex);
       }
       return new Dimension(24,24);
     }
@@ -426,6 +426,7 @@ public class ParallelCoordinatePanel extends AbstractTableModelView
                 g.setColor(getColor(r));
                 g.drawLine(cPos[0],dataPnts[r][0],cPos[0]+4,dataPnts[r][0]);
               } catch (Exception ex) {
+                                ExceptionHandler.popupException(""+ex);
               }
             }
           }
@@ -440,6 +441,7 @@ public class ParallelCoordinatePanel extends AbstractTableModelView
                   g.setColor(getColor(r));
                   g.drawLine(cPos[0],dataPnts[r][0],cPos[0]+4,dataPnts[r][0]);
                 } catch (Exception ex) {
+                                    ExceptionHandler.popupException(""+ex);
                 }
               }
             }
@@ -619,6 +621,7 @@ public class ParallelCoordinatePanel extends AbstractTableModelView
           try {
             Thread.sleep(500);
           } catch (Exception ex) {
+                        ExceptionHandler.popupException(""+ex);
           }
         }
       }
@@ -989,7 +992,7 @@ try {
         }
       }
 } catch (Throwable t) {
-  t.printStackTrace();
+                ExceptionHandler.popupException(""+t);
 }
     }
     public void mouseDragged(MouseEvent e) {
@@ -1236,6 +1239,7 @@ try {
           try {
             setRowDisplaySelection((ListSelectionModel)((DefaultListSelectionModel)getSelectionModel()).clone());
           } catch (CloneNotSupportedException ex) {
+                        ExceptionHandler.popupException(""+ex);
           }
         } else {
           DefaultListSelectionModel dlsm = new DefaultListSelectionModel();
@@ -1861,6 +1865,7 @@ try {
       Axis axis = getAxis(tmColIdx);
       return axis.getMin() > axis.getMax();
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     return false;
   }
@@ -1918,8 +1923,7 @@ try {
         repaint();
       }
     } catch (Exception ex) {
-      System.err.println("updateMapData " + ex);
-      ex.printStackTrace();
+            ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -1935,6 +1939,7 @@ try {
       Axis axis = getAxis(tmColIdx);
       return axis.getValue(loc);
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     return Double.NaN;
   }
@@ -1969,10 +1974,10 @@ try {
         }
       }
     } catch (Throwable ex) {
-      System.err.println("mapColumnValues for column " + c + "\t"+ tmColIdx + "\t" + ex);
-      System.err.println("mapColumnValues table rows " + tm.getRowCount() + 
-                         "\t data rows " +  dataPnts.length);
-      ex.printStackTrace();
+            System.err.println("mapColumnValues for column " + c + "\t" + tmColIdx + "\t" + ex);
+            System.err.println("mapColumnValues table rows " + tm.getRowCount()
+                    + "\t data rows " + dataPnts.length);
+            ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -2020,10 +2025,11 @@ try {
       pcp.rsm = rsm != null && rsm instanceof DefaultListSelectionModel 
                 ? (DefaultListSelectionModel)((DefaultListSelectionModel)rsm).clone() 
                 : null;
-    } catch ( CloneNotSupportedException nsex) {
+        } catch (CloneNotSupportedException nsex) {
+            ExceptionHandler.popupException(""+nsex);
       throw nsex;
-    } catch ( Exception ex) {
-      ex.printStackTrace();
+        } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     return pcp;
   }
@@ -2257,7 +2263,7 @@ try {
       try {
         tm = new FileTableModel(args[0]);
       } catch (Exception ex) {
-        System.err.println(args[0] + " " + ex);
+                ExceptionHandler.popupException(""+ex);
         System.exit(1);
       }
     } else {

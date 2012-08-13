@@ -165,6 +165,7 @@ public class VirtualTableModelView extends JPanel {
           VirtualCell vcell = (VirtualCell)vtm.getColumnList().getElementAt(row);
           return vcell.getType();
         } catch (Exception ex) {
+                        ExceptionHandler.popupException(""+ex);
         }
         return "Unknown";
       case 3:
@@ -172,6 +173,7 @@ public class VirtualTableModelView extends JPanel {
           VirtualCell vcell = (VirtualCell)vtm.getColumnList().getElementAt(row);
           return vcell.getDescription();
         } catch (Exception ex) {
+                        ExceptionHandler.popupException(""+ex);
         }
         return "Unknown";
       }
@@ -192,6 +194,7 @@ public class VirtualTableModelView extends JPanel {
             return true;
           }
         } catch (Exception ex) {
+                        ExceptionHandler.popupException(""+ex);
         }
         return false;
       }
@@ -217,6 +220,7 @@ public class VirtualTableModelView extends JPanel {
             }
           }
         } catch (Exception ex) {
+                        ExceptionHandler.popupException(""+ex);
         }
         break;
       }
@@ -378,7 +382,7 @@ public class VirtualTableModelView extends JPanel {
       insRowIcon = new ImageIcon(cl.getResource("edu/umn/genomics/table/Icons/RowInsertBefore24.gif"));
       delRowIcon = new ImageIcon(cl.getResource("edu/umn/genomics/table/Icons/RowDelete24.gif"));
     } catch (Exception ex) {
-      System.err.println("" + ex);
+            ExceptionHandler.popupException(""+ex);
     }
 
     addColBtn = addColIcon != null ? new JButton(addColIcon) : new JButton("Add Column");
@@ -644,12 +648,13 @@ public class VirtualTableModelView extends JPanel {
                   editorPane.setText(help != null ? help : "");
                 } catch (Exception ex) {
                   editorPane.setText("");
-                  System.err.println(" help " + ex);
+                                        ExceptionHandler.popupException(""+ex);
                 }
               }
               // ssplit.resetToPreferredSizes();
               cPanel.validate();
             } catch (Exception ex) {
+                                ExceptionHandler.popupException(""+ex);
             }
           }
         }
@@ -707,9 +712,13 @@ public class VirtualTableModelView extends JPanel {
                       TableModelFormula formulaObj = (TableModelFormula)selClass.getConstructor(argClass).newInstance(args);
                       newColumn(formulaObj, colIdx[0]);
                     } catch (IllegalAccessException accex) {
+                                            ExceptionHandler.popupException(""+accex);
                     } catch (InvocationTargetException invex) {
+                                            ExceptionHandler.popupException(""+invex);
                     } catch (NoSuchMethodException nosmex) {
+                                            ExceptionHandler.popupException(""+nosmex);
                     } catch (InstantiationException instex) {
+                                            ExceptionHandler.popupException(""+instex);
                     }
                   } else {
                     newColumn(new VectorColumn(colName, selClass), colIdx[0]);

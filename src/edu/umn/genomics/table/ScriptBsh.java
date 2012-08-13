@@ -78,7 +78,7 @@ public class ScriptBsh implements ScriptInterpreter {
       try {
         interp.eval("import " + ScriptInterpreter.packageList.get(i) + ".*;");
       } catch (Exception ex) {
-        ex.printStackTrace();
+                ExceptionHandler.popupException(""+ex);
       }
     }
     if (vars != null) {
@@ -87,7 +87,7 @@ public class ScriptBsh implements ScriptInterpreter {
         try {
           interp.set(key,vars.get(key));
         } catch (Exception ex) {
-          ex.printStackTrace();
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     }

@@ -21,19 +21,21 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
 import java.awt.*;
 import java.awt.event.*;
-import java.text.*;
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.*;
-import javax.swing.border.*;
-import java.sql.*;
+
 
 /**
  * JTableView presents the table as a JTable with the ability to sort the values 
@@ -227,7 +229,7 @@ public class JTableView extends AbstractTableModelView implements Serializable {
             // jsp.validate();
             repaint();
           } catch (Exception ex) {
-            System.err.println("lsv ex : " + ex);
+                    ExceptionHandler.popupException(""+ex);
           }
         }
       }
@@ -256,7 +258,7 @@ public class JTableView extends AbstractTableModelView implements Serializable {
         try {
           sortOnColumn(column);
         } catch (Exception iex) {
-          System.err.println("Interrupted\t" + Thread.currentThread() + " " +iex);
+                   ExceptionHandler.popupException(""+iex);
         }
       } while (sortAgain);
       setCursor(cursor);
@@ -710,6 +712,7 @@ public class JTableView extends AbstractTableModelView implements Serializable {
         }
       }
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     tlsm = new DefaultListSelectionModel();
     if (lsm != null) {

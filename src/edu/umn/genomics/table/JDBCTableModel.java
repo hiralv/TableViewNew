@@ -134,6 +134,7 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
           dbmdConn.close();
         }
       } catch (SQLException sqlex) {
+                ExceptionHandler.popupException(""+sqlex);
       }
     }
     dbmd = conn.getMetaData(); 
@@ -163,12 +164,12 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
             count = ((Number)co).intValue();
           }
         } catch (SQLException sqlex) {
-          System.err.println("getCountForQuery\t" + query + "\t" + sqlex); 
+                    ExceptionHandler.popupException(""+sqlex);
         } finally {
           rs.close();
         }
       } catch (Exception ex) {
-        System.err.println("getCountForQuery\t" + query + "\t" + ex); 
+                ExceptionHandler.popupException(""+ex);
       }
       return count;
     } 
@@ -253,12 +254,12 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
             if (debug > 0) System.err.println("dataThread " + "\t" + getQuery());
             readData(execQuery(q, false));
           } catch (Exception ex) {
-            fireStatusEvent(null,ex);
-            System.err.println(this + " readData " + ex);
-            ex.printStackTrace();
+                        fireStatusEvent(null, ex);
+                        ExceptionHandler.popupException(""+ex);
           } catch (OutOfMemoryError err) {
-            fireStatusEvent(err.toString(),null);
-            throw(err);
+                        fireStatusEvent(err.toString(), null);
+                        ExceptionHandler.popupException(""+err);
+                        throw (err);
           }
         }
       };
@@ -311,10 +312,12 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
     try {
       cancelStatements();
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     try {
       cancelResultSets();
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     // stop all threads
     // delete all column Maps 
@@ -340,7 +343,7 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
         countStmt.close();
       } catch (SQLException sqlex) {
         for (SQLException ex = sqlex; ex != null; ex = ex.getNextException()) {
-          System.err.println("cancelCount: " +  ex);
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     }
@@ -348,6 +351,7 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
       try {
         countThread.interrupt();
       } catch (Exception ex) {
+                ExceptionHandler.popupException(""+ex);
       }
       countThread = null;
     }
@@ -365,11 +369,16 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
   private void addStatement(Statement stmt) {
     stmtv.addElement(stmt);
     try {
-      if(debug>3) System.err.println("stmtv add: " + stmt.getConnection() + " " + stmtv);
+            if (debug > 3) {
+                System.err.println("stmtv add: " + stmt.getConnection() + " " + stmtv);
+            }
     } catch (Exception ex) {
-      if(debug>3) System.err.println("stmtv add: " + ex);
+            if (debug > 3) {
+                ExceptionHandler.popupException(""+ex);
     }
   }
+    }
+
   private void removeStatement(Statement stmt) {
     stmtv.removeElement(stmt);
     if(debug>3) System.err.println("stmtv rmv: " + stmtv);
@@ -390,9 +399,11 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
     try {
       if(debug>3) System.err.println("rsltv add: " + rslt.getStatement().getConnection() + " " + rsltv);
     } catch (Exception ex) {
-      if(debug>3) System.err.println("rsltv add: " + ex);
+            if (debug > 3) {
+                ExceptionHandler.popupException(""+ex);
     }
   }
+    }
 
   private void removeResultSet(ResultSet rslt) {
     try {
@@ -401,7 +412,7 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
       rslt.getStatement().close();
       rslt.close();
     } catch (Exception ex) {
-      System.err.println(" removeResultSet " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
     rsltv.removeElement(rslt);
     if(debug>3) System.err.println("rsltv rmv: " + rsltv);
@@ -536,7 +547,7 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
       dbname = dbmd.getDatabaseProductName();
     } catch (SQLException sqlexd) {
       for (SQLException ex = sqlexd; ex != null; ex = ex.getNextException()) {
-        System.err.println("getStatQuery: " +  ex);
+                ExceptionHandler.popupException(""+ex);
       }
     }
     if (dbname != null && dbname.equalsIgnoreCase("Oracle")) {
@@ -585,8 +596,7 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
           if (debug > 3) System.err.println("statsThread " + "\t" + cmap.getName());
           collectStats(cmap);
         } catch (Exception ex) {
-          System.err.println(this + " statsThread " + ex);
-          //ex.printStackTrace();
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     };
@@ -615,11 +625,10 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
       }
     } catch (SQLException sqlexd) {
       for (SQLException ex = sqlexd; ex != null; ex = ex.getNextException()) {
-        System.err.println("supportsSelectInFrom: " +  ex);
+                ExceptionHandler.popupException(""+ex);
       }
     } catch (Exception ex) {
-      System.err.println("supportsSelectInFrom: " +  ex);
-      ex.printStackTrace();
+            ExceptionHandler.popupException(""+ex);
     }
     return false;
   }
@@ -663,10 +672,10 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
       }
     } catch (SQLException sqlexd) {
       for (SQLException ex = sqlexd; ex != null; ex = ex.getNextException()) {
-        System.err.println("collectStats: " +  ex);
+                ExceptionHandler.popupException(""+ex);
       }
     } catch (Exception ex) {
-      System.err.println("collectStats: " +  ex);
+            ExceptionHandler.popupException(""+ex);
     }
 
     String q = getMinMaxQuery(colName);
@@ -689,13 +698,13 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
           }
         }
       } catch (SQLException sqlex) {
-        System.err.println("getMinMaxQuery\t" + q + "\t" + sqlex);
+                ExceptionHandler.popupException(""+sqlex);
       } finally {
         removeResultSet(rs);
         rs.close();
       }
     } catch (Exception ex) {
-      System.err.println("collectStats\t" + q + "\t" + ex);
+            ExceptionHandler.popupException(""+ex);
     }
 
     if (Thread.interrupted())
@@ -711,13 +720,13 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
             cmap.setAvg(((Number)rs.getObject(1)).doubleValue());
           }
         } catch (SQLException sqlex) {
-          System.err.println("getAvgQuery\t" + q + "\t" + sqlex);
+                    ExceptionHandler.popupException(""+sqlex);
         } finally {
           removeResultSet(rs);
           rs.close();
         }
       } catch (Exception ex) {
-        System.err.println("getAvgQuery\t" + q + "\t" + ex);
+                ExceptionHandler.popupException(""+ex);
       }
     }
 
@@ -738,13 +747,13 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
             }
           }
         } catch (SQLException sqlex) {
-          System.err.println("getDistinctQuery\t" + q + "\t" + sqlex);
+                    ExceptionHandler.popupException(""+sqlex);
         } finally {
           removeResultSet(rs);
           rs.close();
         }
       } catch (Exception ex) {
-        System.err.println("getDistinctQuery\t" + q + "\t" + ex);
+                ExceptionHandler.popupException(""+ex);
       }
     }
 
@@ -761,13 +770,13 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
             cmap.setNullCount(((Number)rs.getObject(1)).intValue());
           }
         } catch (SQLException sqlex) {
-          System.err.println("getNullCountQuery\t" + q + "\t" + sqlex);
+                    ExceptionHandler.popupException(""+sqlex);
         } finally {
           removeResultSet(rs);
           rs.close();
         }
       } catch (Exception ex) {
-        System.err.println("getNullCountQuery\t" + q + "\t" + ex);
+                ExceptionHandler.popupException(""+ex);
       }
     }
 
@@ -795,6 +804,7 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
         colClass = Class.forName(ctn);
       } catch (Exception ex) {
         colClass = DBColumnMap.getClassForSqlType(sqlType); 
+                ExceptionHandler.popupException(""+ex);
       }
       cMap[c] = new DBColumnMap(this, lsm, name, c, colClass, sqlType);
       cMap[c].setState(CellMap.MAPPING);
@@ -859,6 +869,7 @@ public class JDBCTableModel extends AbstractTableModel implements TableColumnMap
       fireStatusEvent("", rowsRead, rowLimit < 0 ? rowCount : rowLimit, queryCount, null);
     } catch (InterruptedException iex) {
       fireStatusEvent("Interrupted: ", rowsRead, rowCount, queryCount, null);
+            ExceptionHandler.popupException(""+iex);
     }
     for (int c = 0; c < ncol; c++) {
       cMap[c].setSortOrder(CellMap.ALPHANUMSORT);

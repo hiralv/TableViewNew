@@ -44,7 +44,7 @@ public class TableViewPreferences {
         importPreferences(defaultPath);
       }
     } catch (Exception ex) {
-      ex.printStackTrace();
+      ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -89,17 +89,17 @@ public class TableViewPreferences {
         // Class
         }
       } catch (NoSuchMethodException ex) {
-          ex.printStackTrace();
+          ExceptionHandler.popupException(""+ex);
       } catch (InvocationTargetException ex) {
-          ex.printStackTrace();
+          ExceptionHandler.popupException(""+ex);
       } catch (IllegalAccessException ex) {
-          ex.printStackTrace();
+          ExceptionHandler.popupException(""+ex);
       }
       pref.sync();
     } catch (NullPointerException ex) {
-      ex.printStackTrace();
+      ExceptionHandler.popupException(""+ex);
     } catch (BackingStoreException ex) {
-      ex.printStackTrace();
+      ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -128,13 +128,13 @@ public class TableViewPreferences {
         // Class
         }
       } catch (NoSuchMethodException ex) {
-          ex.printStackTrace();
+          ExceptionHandler.popupException(""+ex);
       }
       pref.sync();
     } catch (NullPointerException ex) {
-      ex.printStackTrace();
+      ExceptionHandler.popupException(""+ex);
     } catch (BackingStoreException ex) {
-      ex.printStackTrace();
+      ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -172,17 +172,17 @@ public class TableViewPreferences {
           // Class
           }
         } catch (NoSuchMethodException ex) {
-          ex.printStackTrace();
+          ExceptionHandler.popupException(""+ex);
         } catch (InvocationTargetException ex) {
-          ex.printStackTrace();
+          ExceptionHandler.popupException(""+ex);
         } catch (IllegalAccessException ex) {
-          ex.printStackTrace();
+          ExceptionHandler.popupException(""+ex);
         }
       }
     } catch (NullPointerException ex) {
-      ex.printStackTrace();
+      ExceptionHandler.popupException(""+ex);
     } catch (BackingStoreException ex) {
-      ex.printStackTrace();
+      ExceptionHandler.popupException(""+ex);
     }
 
   }
@@ -234,14 +234,14 @@ public class TableViewPreferences {
           // Class
           }
         } catch (NoSuchMethodException ex) {
-          ex.printStackTrace();
+          ExceptionHandler.popupException(""+ex);
         } catch (InvocationTargetException ex) {
-          ex.printStackTrace();
+          ExceptionHandler.popupException(""+ex);
         } catch (IllegalAccessException ex) {
-          ex.printStackTrace();
+          ExceptionHandler.popupException(""+ex);
         }
     } catch (NullPointerException ex) {
-      ex.printStackTrace();
+      ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -258,11 +258,12 @@ public class TableViewPreferences {
               attributes.add(getMethod.getName().substring(3));
             }
           } catch (NoSuchMethodException ex) {
+              ExceptionHandler.popupException(""+ex);
           }
         }
       }
     } catch (NullPointerException ex) {
-      ex.printStackTrace();
+      ExceptionHandler.popupException(""+ex);
     }
     return attributes;
   }
@@ -321,6 +322,7 @@ public class TableViewPreferences {
       try {
         s += ","+name+"="+getAttributeValue(drawable,name);
       } catch(Exception ex) {
+          ExceptionHandler.popupException(""+ex);
       }
     }
     return s;
@@ -336,7 +338,7 @@ public class TableViewPreferences {
       }
       return drawable;
     } catch (Exception ex) {
-      ex.printStackTrace();
+      ExceptionHandler.popupException(""+ex);
     }
     return null;
   }
