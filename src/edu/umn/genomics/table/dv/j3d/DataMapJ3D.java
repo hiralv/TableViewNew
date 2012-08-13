@@ -21,26 +21,24 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table.dv.j3d;  //DataViewer
 
-import java.io.Serializable;
-import java.lang.*;
-import java.math.*;
-import java.util.Enumeration;
-import java.awt.Color;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import javax.swing.JOptionPane;
-
-import javax.media.j3d.*;
-import javax.vecmath.*;
-import com.sun.j3d.utils.picking.*;
-import com.sun.j3d.utils.geometry.*;
-import javax.swing.ListSelectionModel;
-import edu.umn.genomics.table.dv.*;
+import com.sun.j3d.utils.picking.PickTool;
+import edu.umn.genomics.table.ExceptionHandler;
 import edu.umn.genomics.table.SetOperator;
+import edu.umn.genomics.table.dv.DataMap;
+import java.awt.Color;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Enumeration;
+import javax.media.j3d.*;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.TableModel;
+import javax.vecmath.Point3d;
 
 /**
  * This class extends DataMap to maps columns from a TableModel to 
@@ -250,8 +248,7 @@ public class DataMapJ3D extends DataMap implements Serializable {
             gGroup.addChild(selGroup);
         }
       } catch (ClassNotFoundException cnfe) {
-        JOptionPane.showMessageDialog(null, "Selection requires Java3D v1.2", 
-              "alert", JOptionPane.ERROR_MESSAGE);
+                ExceptionHandler.popupException(""+cnfe);
       }
 
     }
@@ -325,9 +322,7 @@ public class DataMapJ3D extends DataMap implements Serializable {
           if (dval != Double.NaN) 
             glyph.setColor(colorMap.getColor(dval));
         } catch (Exception e) {
-          System.err.println(e);
-          System.err.println(tableModel.getValueAt(
-                     i,colormapIndex));
+                   ExceptionHandler.popupException(""+e);
         }
       }
     }
@@ -470,6 +465,7 @@ public class DataMapJ3D extends DataMap implements Serializable {
           PickTool.setCapabilities(s3d, PickTool.INTERSECT_FULL); 
         }
       } catch (ClassNotFoundException cnfe) {
+                ExceptionHandler.popupException(""+cnfe);
       }
       pGroup.addChild(s3d);
     }

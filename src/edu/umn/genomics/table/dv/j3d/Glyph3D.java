@@ -21,26 +21,31 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table.dv.j3d;  //DataViewer
+import com.sun.j3d.utils.geometry.*;
+import edu.umn.genomics.table.ExceptionHandler;
+import edu.umn.genomics.table.dv.Glyph;
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.BitSet; 
 import java.util.Vector; 
-import java.awt.Color; 
 import javax.media.j3d.*; 
-import javax.vecmath.*; 
-import com.sun.j3d.utils.geometry.*; 
-import edu.umn.genomics.table.dv.*;
+import javax.vecmath.Color3f;
+import javax.vecmath.Vector3d;
 
 /**
- * @author       J Johnson
- * @version $Revision: 1.1 $ $Date: 2003/05/15 18:23:49 $  $Name: TableView1_2 $
- * @since        1.0
+ * @author J Johnson
+ * @version $Revision: 1.1 $ $Date: 2003/05/15 18:23:49 $ $Name: TableView1_3_2
+ * $
+ * @since 1.0
  */
-public class Glyph3D extends BranchGroup implements Serializable,Glyph {
-  /** map names to data representations. */
+public class Glyph3D extends BranchGroup implements Serializable, Glyph {
+
+    /**
+     * map names to data representations.
+     */
   private static Vector dataReps = new Vector();
+
   static {
     dataReps.add("sphere");
     dataReps.add("cube");
@@ -204,7 +209,7 @@ public class Glyph3D extends BranchGroup implements Serializable,Glyph {
       m.setDiffuseColor(c); 
       //m.setEmissiveColor(c); 
     } catch (Exception e) {
-	System.err.println("Glyph3D.setColor() " + e);
+            ExceptionHandler.popupException(""+e);
     }
   }
 
@@ -254,7 +259,7 @@ public class Glyph3D extends BranchGroup implements Serializable,Glyph {
     try {
       transformGroup.setTransform(transform);
     } catch (Exception e) {
-      System.err.println("setScale " + e);
+            ExceptionHandler.popupException(""+e);
     }
   }
 
@@ -269,7 +274,7 @@ public class Glyph3D extends BranchGroup implements Serializable,Glyph {
     try {
       transformGroup.setTransform(transform);
     } catch (Exception e) {
-      System.err.println("setScale " + e);
+            ExceptionHandler.popupException(""+e);
     }
   }
 

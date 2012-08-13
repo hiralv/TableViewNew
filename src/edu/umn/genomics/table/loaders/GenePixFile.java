@@ -21,19 +21,27 @@
  * GNU General Public License for more details.
  * 
  */
-
 package edu.umn.genomics.table.loaders;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
+import edu.umn.genomics.file.ExtensionFileFilter;
+import edu.umn.genomics.file.OpenInputSource;
+import edu.umn.genomics.table.AbstractTableSource;
+import edu.umn.genomics.table.ExceptionHandler;
+import edu.umn.genomics.table.FileTableModel;
+import edu.umn.genomics.table.OpenTableSource;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
-import edu.umn.genomics.table.*;
-import edu.umn.genomics.file.*;
+import javax.swing.table.TableModel;
 
 /**
  * A Graphical User Interface for loading a data table from a GenePix file or URL, 
@@ -88,6 +96,7 @@ public class GenePixFile extends AbstractTableSource implements OpenTableSource 
             try {
               openTableSource();
             } catch (Exception ex) {
+                            ExceptionHandler.popupException(""+ex);
             }
         }
       });
@@ -103,6 +112,7 @@ public class GenePixFile extends AbstractTableSource implements OpenTableSource 
               path.setText(file.getAbsolutePath());
               openTableSource();
             } catch (Exception ex) {
+                                ExceptionHandler.popupException(""+ex);
             }
           } else {
                 System.err.println("Open command cancelled by user.");
@@ -152,12 +162,7 @@ public class GenePixFile extends AbstractTableSource implements OpenTableSource 
     try {
       openTableSource(path.getText());
     } catch (Exception ex) {
-      System.err.println(" openTableSource " + ex);
-      // ex.printStackTrace();
-      JOptionPane.showMessageDialog((Window)getTopLevelAncestor(),
-                                     ex,
-                                     "Unable to open table",
-                                     JOptionPane.ERROR_MESSAGE);
+           ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -186,11 +191,13 @@ public class GenePixFile extends AbstractTableSource implements OpenTableSource 
     try {
       headerRecords = Integer.parseInt(st.nextToken());
     } catch (Exception nex) {
+            ExceptionHandler.popupException(""+nex);
       throw new IOException("Not in GenePix Axon Text Format: missing option header record count in second line");
     }
     try {
       dataFields = Integer.parseInt(st.nextToken());
     } catch (Exception nex) {
+            ExceptionHandler.popupException(""+nex);
       throw new IOException("Not in GenePix Axon Text Format: missing data column count in second line");
     }
     sb.append(line).append(lineSep);

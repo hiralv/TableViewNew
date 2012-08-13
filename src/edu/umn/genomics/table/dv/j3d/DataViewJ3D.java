@@ -21,45 +21,32 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table.dv.j3d;  //DataViewer
 
-import java.io.Serializable;
-import javax.swing.JPanel;
-import javax.swing.event.TableModelListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.table.*;
-import javax.swing.ListSelectionModel;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.BitSet;
-import java.util.Observer;
-import java.util.Observable;
-import java.util.Enumeration;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Cursor;
-import java.awt.Frame;
-import java.awt.Component;
-import java.awt.BorderLayout;
-import java.awt.event.*;
-import edu.umn.genomics.table.dv.*;
-import edu.umn.genomics.j3d.CaptureCanvas3D;
-import edu.umn.genomics.graph.*;
-
-
-
-import javax.media.j3d.*;
-import javax.vecmath.*;
-import com.sun.j3d.utils.applet.MainFrame;
-import com.sun.j3d.utils.universe.*;
-import com.sun.j3d.utils.geometry.*;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
-import com.sun.j3d.utils.behaviors.mouse.MouseZoom;
 import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
-import com.sun.j3d.utils.picking.*;
+import com.sun.j3d.utils.behaviors.mouse.MouseZoom;
+import com.sun.j3d.utils.universe.SimpleUniverse;
+import com.sun.j3d.utils.universe.Viewer;
+import com.sun.j3d.utils.universe.ViewingPlatform;
+import edu.umn.genomics.graph.LinearAxis;
+import edu.umn.genomics.j3d.CaptureCanvas3D;
+import edu.umn.genomics.table.ExceptionHandler;
+import edu.umn.genomics.table.dv.DataMap;
+import edu.umn.genomics.table.dv.DataView;
+import java.awt.*;
+import java.io.Serializable;
+import java.util.BitSet;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Observer;
+import javax.media.j3d.*;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.TableModel;
+import javax.vecmath.Color3f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 
 
 
@@ -161,7 +148,7 @@ public class DataViewJ3D extends DataView implements Serializable {
         setAxes(l.x,l.y,l.z, u.x,u.y,u.z);
       }
     } catch (Exception e) {
-      System.err.println("bbox: " + e);
+            ExceptionHandler.popupException(""+e);
     }
 //System.err.println("isLive: " + dm.getBranchGroup().isLive());
     dm.addObserver(this);

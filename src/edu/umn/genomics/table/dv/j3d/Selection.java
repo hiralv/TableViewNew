@@ -21,24 +21,23 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table.dv.j3d;
 /*
  * Selection.java 
  */
 
-import java.io.Serializable;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.media.j3d.*;
-import javax.vecmath.*;
-import com.sun.j3d.utils.picking.*;
-import com.sun.j3d.utils.geometry.*;
-import javax.swing.ListSelectionModel;
+import com.sun.j3d.utils.picking.PickCanvas;
+import com.sun.j3d.utils.picking.PickIntersection;
+import com.sun.j3d.utils.picking.PickResult;
 import edu.umn.genomics.table.SetOperator;
-import edu.umn.genomics.table.dv.*;
+import java.awt.AWTEvent;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.io.Serializable;
+import java.util.Enumeration;
+import javax.media.j3d.*;
+import javax.swing.ListSelectionModel;
+import javax.vecmath.*;
 
 /**
  * Processes mouse events for picking indices of an IndexedPointSet and 

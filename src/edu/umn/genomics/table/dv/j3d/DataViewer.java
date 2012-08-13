@@ -21,23 +21,24 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table.dv.j3d;  //DataViewer
 
-import java.io.Serializable;
-import java.awt.*;
-import java.io.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
-import java.util.Observer;
-import java.util.Vector;
-import edu.umn.genomics.table.FileTableModel;
-import edu.umn.genomics.table.dv.*;
 import edu.umn.genomics.component.SaveImage;
-
+import edu.umn.genomics.table.ExceptionHandler;
+import edu.umn.genomics.table.FileTableModel;
+import edu.umn.genomics.table.dv.DataMap;
+import edu.umn.genomics.table.dv.DataView;
+import edu.umn.genomics.table.dv.DataView2D;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Vector;
+import javax.swing.*;
 
 /**
  * Application Class for data viewing.
@@ -70,7 +71,7 @@ public class DataViewer extends JPanel implements Serializable {
       JPopupMenu.setDefaultLightWeightPopupEnabled(false);
     } catch(ClassNotFoundException e) {
       dv = new DataView2D();
-      System.err.println("using DataView2D");
+                ExceptionHandler.popupException(""+e);
     }
    }
 
@@ -161,8 +162,7 @@ public class DataViewer extends JPanel implements Serializable {
     try {
       importData(filename);
     } catch (IOException ioex) {
-      JOptionPane.showMessageDialog(parent, file+" " + ioex,
-                  "Cannot load file", JOptionPane.ERROR_MESSAGE);
+            ExceptionHandler.popupException(""+ioex);
       return;
     }
   }
@@ -236,9 +236,7 @@ System.err.println("adding to menu: " + ds.getName());
               try {
                 SaveImage.saveImage(dv.getCanvas());
               } catch (Exception ex) {
-                JOptionPane.showMessageDialog(
-                    JOptionPane.getFrameForComponent((Component)e.getSource()), 
-                    ex, "Cannot save image", JOptionPane.ERROR_MESSAGE);
+                        ExceptionHandler.popupException(""+ex);
               }
             }
         });
@@ -362,6 +360,7 @@ if(true) {
                 }
               }
             } catch (Exception ex) {
+                            ExceptionHandler.popupException(""+ex);
             }
           }
       }); 
@@ -380,6 +379,7 @@ if(true) {
                 }
               }
             } catch (Exception ex) {
+                            ExceptionHandler.popupException(""+ex);
             }
           }
       });
@@ -430,7 +430,7 @@ if(true) {
       try {
         dv.importData(args[i]);
       } catch (IOException ioex) {
-        System.err.println(args[i] + " :  " + ioex);
+                ExceptionHandler.popupException(""+ioex);
       }
     }
   } 
