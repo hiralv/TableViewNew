@@ -21,29 +21,27 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.util.*;
-import java.lang.ref.*;
-import java.lang.reflect.*;
-import javax.swing.table.TableModel;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Date;
+import java.util.Vector;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
+import javax.swing.table.TableModel;
 
 /**
- * This ColumnMap is designed to be used as a data cache for 
- * a column in a TableModel. It stores numerical and Date data 
- * in primitive arrays.
- * @author       J Johnson
- * @version $Revision: 1.15 $ $Date: 2004/08/18 17:32:54 $  $Name: TableView1_3 $
- * @since        1.0
+ * This ColumnMap is designed to be used as a data cache for a column in a
+ * TableModel. It stores numerical and Date data in primitive arrays.
+ *
+ * @author J Johnson
+ * @version $Revision: 1.15 $ $Date: 2004/08/18 17:32:54 $ $Name: TableView1_3_2
+ * $
+ * @since 1.0
  */
 public class CacheColumnMap extends BaseColumnMap {
+
   int bufIncr = 1000;
   int floatCnt = 0; // The count of numbers with floating point remainders
   BitSet nullCells = null;
@@ -59,8 +57,6 @@ public class CacheColumnMap extends BaseColumnMap {
   //   lastdata -> prim[] to keep last accessed from being collected
   //   writedata -> prim[] to keep buffer currently being written from being collected
   //
-  //   BitSet 
-  //
   // colHash
   // objList
   // sortIndex
@@ -73,7 +69,7 @@ public class CacheColumnMap extends BaseColumnMap {
   }
 
   public void setMinObj(Object minObj) {
-    this.minObj =  minObj;
+        this.minObj = minObj;
   }
 
   public Object getMaxObj() {
@@ -81,11 +77,11 @@ public class CacheColumnMap extends BaseColumnMap {
   }
 
   public void setMaxObj(Object maxObj) {
-    this.maxObj =  maxObj;
+        this.maxObj = maxObj;
   }
 
   public CacheColumnMap(TableModel tm, ListSelectionModel lsm, String name, int colIndex, Class colClass) {
-    super(tm,colIndex);
+        super(tm, colIndex);
     this.lsm = lsm;
     this.name = name;
     this.colClass = colClass;
@@ -132,10 +128,10 @@ public class CacheColumnMap extends BaseColumnMap {
   /**
    * Return the element that is mapped nearest to the the mapValue in the
    * given direction.
+     *
    * @param mapValue the relative position on the map
-   * @param dir negative means round down, positive mean round up,
-   *            0 rounds to closest..
-   * return the element that is mapped nearest to the the mapValue.
+     * @param dir negative means round down, positive mean round up, 0 rounds to
+     * closest.. return the element that is mapped nearest to the the mapValue.
    */
   public Object getMappedValue(double mapValue, int dir) {
     if (data != null && data instanceof BitSet) {
@@ -384,7 +380,6 @@ public class CacheColumnMap extends BaseColumnMap {
 
   /**
    */
-
   protected void checkArraySize(int size) {
     data = checkArraySize(data,size);
   }
@@ -426,7 +421,7 @@ public class CacheColumnMap extends BaseColumnMap {
       array = tmp;
     }
     } catch (Throwable t) {
-      System.err.println(this + "\t" + size + "\t" + t);
+            ExceptionHandler.popupException(""+t);
     }
     return array;
   }
@@ -718,6 +713,5 @@ public class CacheColumnMap extends BaseColumnMap {
   // Override since we are controlled by this tablemodel
   public void cleanUp() {
   }
-
  // SelectableCellMap
 }

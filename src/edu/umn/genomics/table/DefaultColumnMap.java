@@ -21,19 +21,17 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
 import java.io.Serializable;
-import java.lang.ref.*;
-import java.util.*;
-import java.text.DecimalFormat;
-import java.text.ParsePosition;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
-import edu.umn.genomics.graph.LineFormula;
+import java.util.BitSet;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Hashtable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 
 /**
  * DefaultColumnMap maps the values of a TableModel column to a numeric range.
@@ -66,6 +64,7 @@ public class DefaultColumnMap extends BaseColumnMap
       Class.forName("java.lang.ref.SoftReference");
       //canRef = true;
     } catch (ClassNotFoundException cnfe) {
+            ExceptionHandler.popupException(""+cnfe);
     }
   }
   int rowCount = 0;
@@ -539,7 +538,7 @@ public class DefaultColumnMap extends BaseColumnMap
           el.count = nrows;
         }
         } catch (Exception ex) {
-          ex.printStackTrace();
+                    ExceptionHandler.popupException(""+ex);
           System.err.println("colHash " + colHash);
           System.err.println("nullTag " + nullTag);
         }

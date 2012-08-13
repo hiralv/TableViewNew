@@ -56,7 +56,9 @@ public class AppResources {
     try {
       return messages.getObject(key);
     } catch (NullPointerException ex) {
+        ExceptionHandler.popupException(""+ex);
     } catch (MissingResourceException ex) {
+        ExceptionHandler.popupException(""+ex);
     }
     return defaultValue;
   }
@@ -69,7 +71,9 @@ public class AppResources {
     try {
       return messages.getString(key);
     } catch (NullPointerException ex) {
+        ExceptionHandler.popupException(""+ex);
     } catch (MissingResourceException ex) {
+        ExceptionHandler.popupException(""+ex);
     }
     return defaultValue;
   }

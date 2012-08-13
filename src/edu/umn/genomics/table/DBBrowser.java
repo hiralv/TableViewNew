@@ -21,22 +21,20 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.util.*;
-import java.sql.*;
-import java.text.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.lang.reflect.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import javax.swing.border.*;
 import edu.umn.genomics.bi.dbutil.*;
 import edu.umn.genomics.component.DoSpinner;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 
 /**
  * Browse the contents of a database, and supply a TabelModel 
@@ -48,12 +46,12 @@ import edu.umn.genomics.component.DoSpinner;
  */
 public class DBBrowser extends AbstractTableSource {
   // 
+
   int loginTimeout = 10;
   // known database accounts
   DBAccountListModel dbmodel;
   JComboBox dbChooser; 
   DBConnectParams dbuser;
-
   Connection conn;
   Statement stmt;
   DatabaseMetaData dbmd;
@@ -83,37 +81,29 @@ public class DBBrowser extends AbstractTableSource {
   DefaultListModel tableModel;
   JList tableList;
   JScrollPane tjsp;
-
   // columns
   DefaultListModel colListModel;
   JList colList;
-
   // columns info
   DefaultTableModel colModel;
   JTable colTable;
   JScrollPane cjsp;
-
   // Primary Key Info
   ResultTableModel pKeyModel;
   JTable pKeyTable;
   JScrollPane pKeyjsp;
-
   // Foreign Key Info
   ResultTableModel fKeyModel;
   JTable fKeyTable;
   JScrollPane fKeyjsp;
-
   // Exported Key Info
   ResultTableModel xKeyModel;
   JTable xKeyTable;
   JScrollPane xKeyjsp;
-  
-
   // index info
   DefaultTableModel idxModel;
   JTable idxTable;
   JScrollPane idxjsp;
-
   // TabbedPane for Columns, Database Info, etc.
   JTabbedPane cPnl;
   // Database MetaData Info Panel
@@ -128,7 +118,6 @@ public class DBBrowser extends AbstractTableSource {
   //
   JButton submitBtn = new JButton("submit");
   JButton stopBtn = new JButton("stop");
-
   // Paging through data
   Box pgBox = new Box(BoxLayout.X_AXIS);
   JLabel rowsLbl = new JLabel("Rows:");
@@ -136,18 +125,16 @@ public class DBBrowser extends AbstractTableSource {
   JCheckBox usePaging = new JCheckBox("Paging?");
   JComponent pageSize = DoSpinner.getComponent(100, 1, 1000000, 1);
   JComponent curPage = DoSpinner.getComponent(1, 1, 1000000, 1);
-
   // Launch tTableView with ResultTable
   TableView tableView = null;
   JButton tableViewBtn = new JButton("TableView");
-
   StatusListener statusListener = 
     new StatusListener() {
+
       public void statusChanged(StatusEvent e) {
         setQueryStatus(e.getStatus()); 
       }
     };
-
   static Hashtable sqlTypeName = SQLTypeNames.getSharedInstance();
 
   private static String getSqlTypeFor(Class jc) {
@@ -164,7 +151,7 @@ public class DBBrowser extends AbstractTableSource {
         return "VARCHAR(32)";
       }
     } catch (Exception ex) {
-      System.err.println("getSqlTypeFor " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
     return null;
   }
@@ -207,10 +194,7 @@ public class DBBrowser extends AbstractTableSource {
       }
     } catch (Exception ex) {
           status.setText("DB connection failed " + ex);
-          JOptionPane.showMessageDialog(frame,
-                                     ex,
-                                     "Data base connection failed",
-                                     JOptionPane.ERROR_MESSAGE);
+            ExceptionHandler.popupException(""+ex);
     }
     return conn;
   }
@@ -228,13 +212,14 @@ public class DBBrowser extends AbstractTableSource {
       ResultSet rs = dbmd.getCatalogs();
       if (rs != null) {
         catalogModel.clear(); 
-        while(rs.next()) {
+                while (rs.next()) {
           String s = rs.getString(1);
           catalogModel.addElement(s);
         }
       }
     } catch (Exception ex) {
       status.setText("DB connection failed " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -244,13 +229,14 @@ public class DBBrowser extends AbstractTableSource {
       ResultSet rs = dbmd.getSchemas();
       if (rs != null) {
         schemaModel.clear(); 
-        while(rs.next()) {
+                while (rs.next()) {
           String s = rs.getString(1);
           schemaModel.addElement(s);
         }
       }
     } catch (Exception ex) {
       status.setText("DB connection failed " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -260,17 +246,17 @@ public class DBBrowser extends AbstractTableSource {
       for (int i = 0; i < catalog.length; i++) {
         if (schema != null) {
           for (int j = 0; j < schema.length; j++) {
-            setTables((String)catalog[i], (String)schema[j]);
+                        setTables((String) catalog[i], (String) schema[j]);
           }
         } else {
-          setTables((String)catalog[i], null);
+                    setTables((String) catalog[i], null);
         }
       }
-    } if (schema != null) {
+        }
+        if (schema != null) {
       for (int j = 0; j < schema.length; j++) {
-        setTables(null, (String)schema[j]);
+                setTables(null, (String) schema[j]);
       }
-    } else {
     }
   }
 
@@ -285,18 +271,18 @@ public class DBBrowser extends AbstractTableSource {
       //  }
       //}
       java.util.List tblList = DBTable.getDBTables(dbmd, catalog, schema, null, null);
-      for (Iterator iter = tblList.listIterator(); iter.hasNext(); ) {
+            for (Iterator iter = tblList.listIterator(); iter.hasNext();) {
           tableModel.addElement(iter.next());
       } 
       //splt.resetToPreferredSizes();
     } catch (Exception ex) {
       status.setText("DB connection failed " + ex);
       if (ex instanceof SQLException) {
-        for (SQLException sqlex = (SQLException)ex; sqlex != null; sqlex = sqlex.getNextException()) {
-          System.err.println(sqlex.toString());
+                for (SQLException sqlex = (SQLException) ex; sqlex != null; sqlex = sqlex.getNextException()) {
+                    ExceptionHandler.popupException(""+sqlex);
         }
       }
-      ex.printStackTrace(); 
+            ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -304,7 +290,7 @@ public class DBBrowser extends AbstractTableSource {
     Vector cols = new Vector();
     Vector rows = new Vector();
     for (int i = 0; i < tables.length; i++) {
-      DBTable tbl = (DBTable)tables[i];
+            DBTable tbl = (DBTable) tables[i];
       setColumns(tbl, cols, rows);
     }
     setColumns(cols, rows);
@@ -333,29 +319,30 @@ public class DBBrowser extends AbstractTableSource {
         }
     } catch (Exception ex) {
       status.setText("DB connection failed " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
 //System.err.println("<<< setColumns");
   }
 
   private void setColumns(Vector cols, Vector rows) {
-    cPnl.setEnabledAt(0,rows.size()>0);
-    cPnl.setEnabledAt(1,rows.size()>0);
+        cPnl.setEnabledAt(0, rows.size() > 0);
+        cPnl.setEnabledAt(1, rows.size() > 0);
     if (rows.size() < 1) {
       colModel.setRowCount(0);
       return;
     } 
     colListModel.removeAllElements();
     for (int i = 0; i < rows.size(); i++) {
-      colListModel.addElement(((Vector)rows.get(i)).get(0));
+            colListModel.addElement(((Vector) rows.get(i)).get(0));
     }
-    colModel.setDataVector(rows,cols); 
+        colModel.setDataVector(rows, cols);
     JComboBox sqlTypes = new JComboBox();
-    for (Iterator i = sqlTypeName.keySet().iterator();i.hasNext();) {
+        for (Iterator i = sqlTypeName.keySet().iterator(); i.hasNext();) {
       sqlTypes.addItem(i.next());
     }
     sqlTypes.setRenderer(new SQLTypeListRenderer());
     JComboBox colTypes = new JComboBox();
-    for (Iterator i = dbDataTypes.iterator();i.hasNext();) {
+        for (Iterator i = dbDataTypes.iterator(); i.hasNext();) {
       colTypes.addItem(i.next());
     }
     JComboBox nullTypes = new JComboBox();
@@ -381,7 +368,7 @@ public class DBBrowser extends AbstractTableSource {
     // ResultTableModel pKeyModel
     if (tables != null && tables.length > 0) {
       for (int i = 0; i < tables.length; i++) {
-        DBTable tbl = (DBTable)tables[i];
+                DBTable tbl = (DBTable) tables[i];
         try {
           ResultSet rs = dbmd.getPrimaryKeys(tbl.getCatalogName(), tbl.getSchemaName(),tbl.getTableName());
           if (i < 1) {
@@ -391,6 +378,7 @@ public class DBBrowser extends AbstractTableSource {
           }
           if (rs != null) rs.close(); // see if close prevents oracle max open cursors error
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     } else { 
@@ -408,6 +396,7 @@ public class DBBrowser extends AbstractTableSource {
           n++;
           if (rs != null) rs.close(); // see if close prevents oracle max open cursors error
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
       for (int i = 0; i < sl.length; i++) {
@@ -421,6 +410,7 @@ public class DBBrowser extends AbstractTableSource {
           n++;
           if (rs != null) rs.close(); // see if close prevents oracle max open cursors error
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     }
@@ -442,6 +432,7 @@ public class DBBrowser extends AbstractTableSource {
           }
           if (rs != null) rs.close(); // see if close prevents oracle max open cursors error
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     } else { 
@@ -459,6 +450,7 @@ public class DBBrowser extends AbstractTableSource {
           n++;
           if (rs != null) rs.close(); // see if close prevents oracle max open cursors error
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
       for (int i = 0; i < sl.length; i++) {
@@ -472,6 +464,7 @@ public class DBBrowser extends AbstractTableSource {
           n++;
           if (rs != null) rs.close(); // see if close prevents oracle max open cursors error
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     }
@@ -493,6 +486,7 @@ public class DBBrowser extends AbstractTableSource {
           }
           if (rs != null) rs.close(); // see if close prevents oracle max open cursors error
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     } else { 
@@ -510,6 +504,7 @@ public class DBBrowser extends AbstractTableSource {
           n++;
           if (rs != null) rs.close(); // see if close prevents oracle max open cursors error
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
       for (int i = 0; i < sl.length; i++) {
@@ -523,6 +518,7 @@ public class DBBrowser extends AbstractTableSource {
           n++;
           if (rs != null) rs.close(); // see if close prevents oracle max open cursors error
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     }
@@ -566,8 +562,8 @@ System.err.println(">>> setIndexInfo");
         }
     } catch (Exception ex) {
       status.setText("DB connection failed " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
-System.err.println("<<< setIndexInfo");
   }
 
   private void setDefaultModel(DefaultTableModel model, Vector cols, Vector rows) {
@@ -649,6 +645,7 @@ System.err.println("<<< setIndexInfo");
     try {
       dbmodel.addQuery(dbuser.getName(),"\n"+sql.trim()+"\n");
     } catch (Exception ex) {
+        ExceptionHandler.popupException(""+ex);
     }
     rowLabel.setText("Rows  ?");
     try {
@@ -661,6 +658,7 @@ System.err.println("<<< setIndexInfo");
         rowModel.addStatusListener(statusListener);
         rowModel.addTableModelListener(
             new TableModelListener() {
+
               public void tableChanged(TableModelEvent e) {
                 setRowCount();
               }
@@ -668,8 +666,7 @@ System.err.println("<<< setIndexInfo");
         rowTable.setTableModel(new VirtualTableModelProxy(rowModel));
       } 
     } catch (Exception ex) {
-      System.err.println("DBBrowser.submitQuery() " + ex);
-      ex.printStackTrace();
+            ExceptionHandler.popupException(""+ex);
     }
     if (getRowLimit() < 0) {
       rowModel.setQuery(sql);
@@ -763,12 +760,7 @@ System.err.println("<<< setIndexInfo");
         schemaList.setSelectedIndex(i);
       }
     } catch (Exception ex) {
-      status.setText("DB connection failed " + ex);
-      JOptionPane.showMessageDialog(frame,
-                               ex,
-                               "Data base connection failed",
-                               JOptionPane.ERROR_MESSAGE);
-      System.err.println("DB connection failed " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -780,28 +772,22 @@ System.err.println("<<< setIndexInfo");
         dbmodel.setSelectedItem(dbmodel.getElementAt(0));
       }
     } catch (Exception ex) {
-      JOptionPane.showMessageDialog(frame,
-                               ex,
-                               "Unable to display Database Account Preferences",
-                               JOptionPane.ERROR_MESSAGE);
+            ExceptionHandler.popupException(""+ex);
     }
 
     JButton dbServices = new JButton("Edit Connections"); 
     dbServices.setToolTipText("Edit Database Account Preferences");
     dbServices.addActionListener(
       new ActionListener() {
+
         public void actionPerformed(ActionEvent e) {
           try {
             (new DatabaseAccountEditor(new DBAccountListModel())).show((Window)getTopLevelAncestor());
           } catch (Exception ex) {
-            JOptionPane.showMessageDialog(frame,
-                               ex,
-                               "Unable to display Database Account Preferences",
-                               JOptionPane.ERROR_MESSAGE);
+                            ExceptionHandler.popupException(""+ex);
           }
         }
-      }
-    );
+                });
 
 
     dbChooser = new JComboBox(dbmodel); 
@@ -810,11 +796,11 @@ System.err.println("<<< setIndexInfo");
     connBtn.setToolTipText("Establish a connection to the selected database");
     connBtn.addActionListener(
       new ActionListener() {
+
         public void actionPerformed(ActionEvent e) {
           connectToDatabase();
         }
-      }
-    );
+                });
 
     JPanel connectionPanel = new JPanel(new BorderLayout());
 
@@ -983,6 +969,7 @@ System.err.println("<<< setIndexInfo");
             // since this can change the preferredsize of the JTable...
             rowTable.validate();
           } catch (Exception ex) {
+                            ExceptionHandler.popupException(""+ex);
           }
         }
       }
@@ -1169,7 +1156,7 @@ System.err.println("<<< setIndexInfo");
           try {
             dbmodel.importPreferences(source);
           } catch (Exception ex) {
-            System.err.println("Unable to set preferences from " + source + "  " + ex);
+                        ExceptionHandler.popupException(""+ex);
           }
         } else if (args[i].equals("-dbname")) {
           dbname = args[++i];
@@ -1241,6 +1228,7 @@ System.err.println("<<< setIndexInfo");
           try {
             ((Window)((JComponent)e.getSource()).getTopLevelAncestor()).dispose();
           } catch (Exception ex) {
+                            ExceptionHandler.popupException(""+ex);
           }
         }
       }
@@ -1302,15 +1290,27 @@ System.err.println("<<< setIndexInfo");
       try {
         setSelected(((Boolean)value).booleanValue());
       } catch (Exception ex) {
+                ExceptionHandler.popupException(""+ex);
       }
       return this;
     }
-    public void validate() {}
-    public void revalidate() {}
-    public void repaint(long tm, int x, int y, int width, int height) {}
-    public void repaint(Rectangle r) {}
-    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {}
-    public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {}
+
+        public void validate() {
   }
+
+        public void revalidate() {
 }
 
+        public void repaint(long tm, int x, int y, int width, int height) {
+        }
+
+        public void repaint(Rectangle r) {
+        }
+
+        protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+        }
+
+        public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
+        }
+    }
+}

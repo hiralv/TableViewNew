@@ -21,19 +21,19 @@
  * GNU General Public License for more details.
  *
  */
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.regex.*;
-import java.text.*;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
-import javax.swing.text.*;
-import javax.swing.event.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * BinModel categorizes an indexed list of items into a number of bins.
@@ -80,14 +80,12 @@ public class BinModelEditor extends JPanel {
 
   ColumnMapBinModel model;
   JTableEditor regexTable;
-
   SpinnerNumberModel numStartModel;
   SpinnerNumberModel numIncrModel;
   JSpinner numStart;
   JSpinner numIncr;
   SpinnerNumberModel numDevModel;
   JSpinner numDev;
-
   // Bin Count
   // Date Range
   SpinnerDateModel startDateModel; 
@@ -97,14 +95,15 @@ public class BinModelEditor extends JPanel {
   // Date Partition
   JComboBox dateField;
   static String[] dateFields = {
-    "Day of the Week",		// Calendar.DAY_OF_WEEK
-    "Day of the Month",		// Calendar.DAY_OF_MONTH
-    "Day of the Year",		// Calendar.DAY_OF_YEAR
-    "Week of the Month",	// Calendar.WEEK_OF_MONTH
-    "Week of the Year",		// Calendar.WEEK_OF_YEAR
-    "Month of the Year"		// Calendar.MONTH
+        "Day of the Week", // Calendar.DAY_OF_WEEK
+        "Day of the Month", // Calendar.DAY_OF_MONTH
+        "Day of the Year", // Calendar.DAY_OF_YEAR
+        "Week of the Month", // Calendar.WEEK_OF_MONTH
+        "Week of the Year", // Calendar.WEEK_OF_YEAR
+        "Month of the Year" // Calendar.MONTH
   };
   static Hashtable dateFieldHt = new Hashtable();
+
   static {
     dateFieldHt.put(dateFields[0], new Integer(Calendar.DAY_OF_WEEK));
     dateFieldHt.put(dateFields[1], new Integer(Calendar.DAY_OF_MONTH));
@@ -148,6 +147,7 @@ public class BinModelEditor extends JPanel {
     "Millisecond", // Calendar.MILLISECOND 
   };
   static Hashtable calFieldHt = new Hashtable();
+
   static {
     calFieldHt.put(calFields[0], new Integer(Calendar.YEAR));
     calFieldHt.put(calFields[1], new Integer(Calendar.MONTH));
@@ -159,8 +159,6 @@ public class BinModelEditor extends JPanel {
     calFieldHt.put(calFields[7], new Integer(Calendar.SECOND));
     calFieldHt.put(calFields[8], new Integer(Calendar.MILLISECOND));
   }
-
-
   JTabbedPane tabs = new JTabbedPane();
 
   public BinModelEditor(ColumnMapBinModel binModel) {
@@ -402,25 +400,16 @@ public class BinModelEditor extends JPanel {
                 }
                 setRegexPartition(model, cmap, regex, labels);
               } catch (PatternSyntaxException ex) {
-                System.err.println(ex.toString());
-                JOptionPane.showMessageDialog(getTopLevelAncestor(),
-                                     ex,
-                                     "Categorize by Pattern Regular Expression Error",
-                                     JOptionPane.ERROR_MESSAGE);
+                                ExceptionHandler.popupException(""+ex);
               } catch (Exception ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(getTopLevelAncestor(),
-                                     ex,
-                                     "Categorize by Pattern Error",
-                                     JOptionPane.ERROR_MESSAGE);
+                                ExceptionHandler.popupException(""+ex);
               }
             }
-          }
-        );
+                    });
       JPanel regexPanel = new JPanel(new BorderLayout());
       regexPanel.add(new JScrollPane(regexTable));
-      regexPanel.add(regexApply,BorderLayout.SOUTH);
-      tabs.addTab("Categorize by Pattern",null,regexPanel,"Categorize by Regular Expression Patterns");
+            regexPanel.add(regexApply, BorderLayout.SOUTH);
+            tabs.addTab("Categorize by Pattern", null, regexPanel, "Categorize by Regular Expression Patterns");
     }
     add(tabs);
   }

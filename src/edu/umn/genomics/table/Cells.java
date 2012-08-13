@@ -21,11 +21,8 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
 import java.util.*;
 import java.math.*;
 import java.text.DecimalFormat;
@@ -37,29 +34,37 @@ import edu.umn.genomics.graph.LineFormula;
 /**
  * Cells
  * 
- * @author       J Johnson
- * @version $Revision: 1.13 $ $Date: 2004/08/12 21:00:02 $  $Name: TableView1_3 $ 
- * @since        1.0
- * @see  javax.swing.table.TableModel 
+ * @author J Johnson
+ * @version $Revision: 1.13 $ $Date: 2004/08/12 21:00:02 $ $Name: TableView1_3_2
+ * $
+ * @since 1.0
+ * @see javax.swing.table.TableModel
  */
 public class Cells {
-  /** Sort by ascending row number.  */
+
+    /**
+     * Sort by ascending row number.
+     */
   public static final int ROWNUM_ASCENDING = Integer.MAX_VALUE;
-  /** Sort by descending row number.  */
+    /**
+     * Sort by descending row number.
+     */
   public static final int ROWNUM_DESCENDING = Integer.MIN_VALUE;
-  /** Sort by select rows first.  */
-  public static final int SELECTED_ROWS_FIRST = Integer.MAX_VALUE-1;
-  /** Sort by select rows first.  */
-  public static final int SELECTED_ROWS_LAST = Integer.MIN_VALUE+1;
-
-
   /** 
-   * Compares the string representations of 2 objects such that numeric 
-   * parts of the strings are compared as numbers, such that 
-   * "id1" = "id0001".  
+     * Sort by select rows first.
+     */
+    public static final int SELECTED_ROWS_FIRST = Integer.MAX_VALUE - 1;
+    /**
+     * Sort by select rows first.
+     */
+    public static final int SELECTED_ROWS_LAST = Integer.MIN_VALUE + 1;
+    /**
+     * Compares the string representations of 2 objects such that numeric parts
+     * of the strings are compared as numbers, such that "id1" = "id0001".
    *
    */
   public static Comparator alphaNumericComparator = new Comparator() {
+
     public int compare(Object o1, Object o2) {
       if (o1 == null) {
         return o2 == null ? 0 : -1;
@@ -70,20 +75,23 @@ public class Cells {
       String s2 = o2.toString();
       int l1 = s1.length();
       int l2 = s2.length();
-      for (int i1 = 0, i2 = 0; ; ) {
+            for (int i1 = 0, i2 = 0;;) {
         if (i1 >= l1 && i2 >= l2) {
           return 0;
         }
-        if (i1 >= l1)
+                if (i1 >= l1) {
           return -1;
-        if (i2 >= l2)
+                }
+                if (i2 >= l2) {
           return 1;
-        if (!Character.isDigit(s1.charAt(i1)) || 
-            !Character.isDigit(s2.charAt(i2))) {
-          if (s1.charAt(i1) < s2.charAt(i2))  
+                }
+                if (!Character.isDigit(s1.charAt(i1))
+                        || !Character.isDigit(s2.charAt(i2))) {
+                    if (s1.charAt(i1) < s2.charAt(i2)) {
             return -1;
-          else if (s1.charAt(i1) > s2.charAt(i2))  
+                    } else if (s1.charAt(i1) > s2.charAt(i2)) {
             return 1;
+                    }
           i1++; 
           i2++; 
         } else {
@@ -188,6 +196,7 @@ public class Cells {
           int c = ((Comparable)o1).compareTo(o2);
           return c; 
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
       return alphaNumericComparator.compare(o1,o2);
@@ -628,7 +637,7 @@ public class Cells {
     try {
       qsort(tm, lsm, idx,0,idx.length-1,columnIndex,defaultComparator);
     } catch (Exception ex) {
-      System.err.println("Cells.getSortIndex " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
     return idx;
   }
@@ -1297,7 +1306,7 @@ public class Cells {
         if (Class.forName("java.lang.Number").equals(getCommonClass(coll))) 
           return min(coll,numberComparator);
       } catch (Exception ex) {
-        System.err.println("Cells.max() " + ex);
+            ExceptionHandler.popupException(""+ex);
       }
       return min(coll,defaultComparator);
     }
@@ -1362,7 +1371,7 @@ public class Cells {
         if (Class.forName("java.lang.Number").equals(getCommonClass(coll)))
           return max(coll,numberComparator);
       } catch (Exception ex) {
-        System.err.println("Cells.max() " + ex);
+            ExceptionHandler.popupException(""+ex);
       }
       return max(coll,defaultComparator);
     }

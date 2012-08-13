@@ -21,19 +21,15 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
-import java.lang.ref.*;
-import java.util.*;
-import java.text.DecimalFormat;
-import java.text.ParsePosition;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
 import edu.umn.genomics.graph.LineFormula;
+import java.io.Serializable;
+import java.util.*;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.EventListenerList;
+import javax.swing.table.TableModel;
 
 /**
  * AbstractColumnMap maps the values of a TableModel column to a numeric range.
@@ -58,6 +54,7 @@ import edu.umn.genomics.graph.LineFormula;
  * @see  javax.swing.ListSelectionModel
  */
 public abstract class AbstractColumnMap implements Serializable, ColumnMap, CleanUp {
+
   protected static final double TRUE_VALUE = 1.;
   protected static final double FALSE_VALUE = 0.;
   protected static final double NULL_VALUE = Double.NaN;
@@ -68,7 +65,7 @@ public abstract class AbstractColumnMap implements Serializable, ColumnMap, Clea
   protected int colIndex = 0;
   protected boolean tryNumber = true; // try to map as Number, else map as Object
   protected boolean isNumber = false; // whether all elements are of type Number
-  protected boolean isDate =   false; // whether all elements are Dates
+    protected boolean isDate = false; // whether all elements are Dates
   protected boolean isBoolean = false; // whether all elements are Boolean
   protected boolean colTyped = false; // the type of the elememts has been determined.
   protected Class colClass = null;
@@ -87,7 +84,6 @@ public abstract class AbstractColumnMap implements Serializable, ColumnMap, Clea
   protected int nullCount = -1;
   protected int infiniteCount = -1;
   protected int distinctCount = -1;
-
   protected boolean minSet = false;
   protected boolean maxSet = false;
   protected boolean medianSet = false;
@@ -99,11 +95,10 @@ public abstract class AbstractColumnMap implements Serializable, ColumnMap, Clea
   protected boolean nullCountSet = false;
   protected boolean infiniteCountSet = false;
   protected boolean distinctCountSet = false;
+    protected static final Object nullTag = new Object() {
 
-
-  protected static final Object nullTag = new Object() {
     public String toString() {
-      return  "\"\"";
+            return "\"\"";
     }
   };
   protected String name = null;
@@ -111,6 +106,7 @@ public abstract class AbstractColumnMap implements Serializable, ColumnMap, Clea
 
   /** 
    * Map the rows in the given column of the table to numeric values. 
+     *
    * @param tableModel the table containing the column of values
    * @param column the index of the column in the TableModel
    */
@@ -138,6 +134,7 @@ public abstract class AbstractColumnMap implements Serializable, ColumnMap, Clea
 
   /**
    * Return the state of mapping.   
+     *
    * @return The state of this map.
    * @see CellMap#UNMAPPED
    * @see CellMap#MAPPING
@@ -150,6 +147,7 @@ public abstract class AbstractColumnMap implements Serializable, ColumnMap, Clea
 
   /**
    * Set the state of mapping.   
+     *
    * @param mapState The mapping state of this map.
    * @see CellMap#UNMAPPED
    * @see CellMap#MAPPING
@@ -163,17 +161,19 @@ public abstract class AbstractColumnMap implements Serializable, ColumnMap, Clea
     }
   }
 
-
   /**
-   * Set the default sorting order for this CellMap Class.
-   * The implementing class needs to store this in a static variable.
+     * Set the default sorting order for this CellMap Class. The implementing
+     * class needs to store this in a static variable.
+     *
    * @param sortOrder the default sorting order for this CellMap Class.
    */
   public void setDefaultSortOrder(int sortOrder) {
     defaultsortby = sortOrder;
   }
+
   /**
    * Return the default sorting order for this CellMap Class.
+     *
    * @return the default sorting order for this CellMap Class.
    */
   public int getDefaultSortOrder() {
@@ -181,15 +181,16 @@ public abstract class AbstractColumnMap implements Serializable, ColumnMap, Clea
   }
 
   /**
-   * Set whether to map Number and Dates values on a continuum
-   * or as a set of discreet elements.
+     * Set whether to map Number and Dates values on a continuum or as a set of
+     * discreet elements.
    */
   public void setMapping(boolean continuous) {
     tryNumber = continuous;
   }
+
   /**
-   * Return whether Number and Dates values are mapped on a continuum
-   * or as a set of discreet elements.
+     * Return whether Number and Dates values are mapped on a continuum or as a
+     * set of discreet elements.
    */
   public boolean getMapping() {
     return tryNumber;
@@ -1403,7 +1404,7 @@ public abstract class AbstractColumnMap implements Serializable, ColumnMap, Clea
           cal.setTime((Date)obj);
           val = cal.get(calFld);
         } catch (Exception ex) {
-          System.err.println("getDatePartition(" + obj + ") " + ex);
+                    ExceptionHandler.popupException(""+ex);
         }
         if (calFld == Calendar.DAY_OF_WEEK && pmap[ri] == 0) {
           System.err.println(ri + " getDatePartition(" + obj + ") " + cal.getTime() + "\t" + cal.get(calFld));

@@ -254,8 +254,7 @@ public class DefaultAggregationModel extends AbstractHistogramModel implements T
           }
         }
       } catch (Exception ex) {
-        System.err.println("Exception calculating bin for item " + r + "  " + arrayString(idx) + " in " + arrayString(dims));
-        ex.printStackTrace();
+        ExceptionHandler.popupException(""+ ex);
         return false;
       }
     }
@@ -408,6 +407,7 @@ public class DefaultAggregationModel extends AbstractHistogramModel implements T
           }
         }
       } catch (Exception ex) {
+          ExceptionHandler.popupException(""+ ex);
       }
     }
     selCounts = null;

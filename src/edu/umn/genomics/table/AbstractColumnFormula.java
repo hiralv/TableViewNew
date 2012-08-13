@@ -21,14 +21,13 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
 import java.io.Serializable;
-import java.util.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
+import java.util.BitSet;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.table.TableModel;
 
 /**
  * AbstractColumnFormula provides the common methods for caching interpretted 
@@ -82,6 +81,7 @@ import javax.swing.table.*;
  * @see  Cells
  */
 public abstract class AbstractColumnFormula implements Serializable, TableModelFormula {
+
   String name = null;
   TableModel tm;
   String script = "";
@@ -95,28 +95,35 @@ public abstract class AbstractColumnFormula implements Serializable, TableModelF
   protected BitSet valueSet = new BitSet();
 
   public AbstractColumnFormula() {
-    this("",null,"");
+        this("", null, "");
   }
+
   public AbstractColumnFormula(String name, TableModel tableModel, String formula) {
     setName(name);
     setTableModel(tableModel);
     setFormula(formula);
   }
+
   public void setName(String name) {
     this.name = name;
   }
+
   public String getName() {
     return name != null ? name : script != null ? script : "";
   }
+
   public void setTableModel(TableModel tableModel) {
     this.tm = tableModel;
   }
+
   public TableModel getTableModel() {
     return tm;
   }
+
   public String getFormula() {
     return script;
   }
+
   public void setFormula(String formula) {
     this.script = formula;
     recalculate();
@@ -158,8 +165,8 @@ public abstract class AbstractColumnFormula implements Serializable, TableModelF
     if (values != null && values.size() > rowIndex && valueSet.get(rowIndex)) {
       obj = values.get(rowIndex);
     } else {
-      obj = retrieveValueAt(rowIndex,columnIndex);
-      setValueAt(obj,rowIndex);
+            obj = retrieveValueAt(rowIndex, columnIndex);
+            setValueAt(obj, rowIndex);
     }
     return obj;
   }
@@ -167,6 +174,7 @@ public abstract class AbstractColumnFormula implements Serializable, TableModelF
   /**
    * This method keeps track of the cells traversed in order to prevent 
    * recursion.  
+     *
    * @param rowIndex The table row of the cell to evaluate.
    * @param columnIndex The table column of the cell to evaluate.
    * @return The cell value result from interpretting the formula.
@@ -184,8 +192,7 @@ public abstract class AbstractColumnFormula implements Serializable, TableModelF
       }
     } catch (Exception ex) {
       result = ex;
-      // System.err.println("AbstractColumnFormula " + ex.getClass() + " " + ex);
-      ex.printStackTrace();
+            ExceptionHandler.popupException(""+ex);
     } finally {
     }
     return result;
@@ -193,6 +200,7 @@ public abstract class AbstractColumnFormula implements Serializable, TableModelF
 
   /**
    * This evalutes the cell value by interpretting the formula.
+     *
    * @param rowIndex The table row of the cell to evaluate.
    * @param columnIndex The table column of the cell to evaluate.
    * @return The cell value result from interpretting the formula.
@@ -205,6 +213,7 @@ public abstract class AbstractColumnFormula implements Serializable, TableModelF
 
   /**
    * Set the cell value in the cache.
+     *
    * @param aValue The value for the table cell.
    * @param rowIndex The table row of the cell to evaluate.
    */
@@ -212,43 +221,43 @@ public abstract class AbstractColumnFormula implements Serializable, TableModelF
     // ensure size
     // values.ensureCapacity(rowIndex+1);
     if (values.size() <= rowIndex) {
-      values.setSize(rowIndex+1);
+            values.setSize(rowIndex + 1);
     }
     // set value
-    values.set(rowIndex,aValue);
+        values.set(rowIndex, aValue);
     // mark bit
     valueSet.set(rowIndex);
   }
 
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-    if (isCellEditable(rowIndex,columnIndex)) {
-      setValueAt(aValue,rowIndex);
+        if (isCellEditable(rowIndex, columnIndex)) {
+            setValueAt(aValue, rowIndex);
     }
   }
 
   public static int getColumnByName(TableModel tm, String name) {
     if (tm != null && name != null) {
       int cc = tm.getColumnCount();
-      for(int i = 0; i < cc; i++) {
-        if (name.equals(tm.getColumnName(i)))
+            for (int i = 0; i < cc; i++) {
+                if (name.equals(tm.getColumnName(i))) {
           return i;
       }
-      for(int i = 0; i < cc; i++) {
-        if (name.equalsIgnoreCase(tm.getColumnName(i)))
+            }
+            for (int i = 0; i < cc; i++) {
+                if (name.equalsIgnoreCase(tm.getColumnName(i))) {
           return i;
       }
     }
+        }
     return -1;
   }
 
   public String toString() {
     return getName();
   }
-
   protected static String interpreterInfo = ""
     + " A formula is interpreted as java code by Script Interpreter. \n"
     + "\n";
-  
   protected static String variableInfo = "" 
     + "\n"
     + " Four variables are provided to the formula: \n"
@@ -301,7 +310,6 @@ public abstract class AbstractColumnFormula implements Serializable, TableModelF
     + "  Set getCommonInterfaces(Collection collection)\n"
     + "  \tReturn a list of java interfaces that all cells in the list implement.\n"
     + "\n";
-
   protected static String exampleInfo = "" 
     + "\n"
     + " Example formulas: \n"
@@ -317,6 +325,7 @@ public abstract class AbstractColumnFormula implements Serializable, TableModelF
 
   /**
    * Get a type name for this cell.
+     *
    * @return The type name for this cell.
    */
   public String getType() {
@@ -325,11 +334,10 @@ public abstract class AbstractColumnFormula implements Serializable, TableModelF
 
   /**
    * Get a description of this VirtualCell.
+     *
    * @return a description of this VirtualCell.
    */
   public String getDescription() {
     return getFormula();
   }
-
-
 }

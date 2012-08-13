@@ -21,17 +21,23 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.Serializable;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Vector;
 import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.TableModel;
 
 /**
  * AbstractHistogramViewND displays a scatter plot of the two selected columns
@@ -141,7 +147,7 @@ public abstract class AbstractHistogramViewND extends AbstractTableModelView
         addDelItem(name, bm);
       }
     } catch (Exception ex) {
-      System.err.println(this.getClass() + ".addColumn("+idx+") " + ex);
+            ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -149,7 +155,7 @@ public abstract class AbstractHistogramViewND extends AbstractTableModelView
     int cnt = hgm != null ? hgm.getModelCount() : 0;
     int[] idx = new int[cnt + (newIdx >= 0 ? 1 : 0)];
     for (int i = 0; i < cnt; i++) {
-      idx[i] = ((ColumnMapBinModel)hgm.getBinModel(i)).getColumnMap().getColumnIndex();
+            idx[i] = ((ColumnMapBinModel) hgm.getBinModel(i)).getColumnMap().getColumnIndex();
     } 
     if (newIdx >= 0) {
       idx[cnt] = newIdx;
@@ -324,6 +330,7 @@ System.err.println("      updateColumns " + c + "\t" + name + "\t" + cMap.getNam
           validate();
           repaint();
         } catch (Exception ex) {
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     }
@@ -370,8 +377,7 @@ System.err.println("<<<   updateColumns");
             hgm.addBinModel(new ColumnMapBinModel(xMap));
           }
         } catch (Exception ex) {
-          System.err.println(this.getClass() + ".setColumns() " + ex);
-          ex.printStackTrace();
+                    ExceptionHandler.popupException(""+ex);
         }
       }
       // Update delMenu

@@ -21,18 +21,14 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
 import java.io.Serializable;
-import java.util.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import java.text.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.awt.Rectangle;
+import java.util.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 /**
  * A CollectionTableModel object provides a TableModel interface to a 
@@ -338,7 +334,7 @@ public class CollectionTableModel extends AbstractTableModel
         if (cc.equals(Void.TYPE))
           return Class.forName("java.lang.Void");
       } catch (ClassNotFoundException cnfe) {
-        System.err.println(cnfe);
+                ExceptionHandler.popupException(""+cnfe);
       }
     }
     return cc;
@@ -406,8 +402,7 @@ public class CollectionTableModel extends AbstractTableModel
           return o;
         }
       } catch (Exception e) {
-        System.err.println(this.getClass() + ".getValueAt(" 
-                           + rowIndex + "," + columnIndex + ") " + e);
+                ExceptionHandler.popupException(""+e);
       }
     }
     return null;

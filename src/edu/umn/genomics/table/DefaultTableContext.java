@@ -24,17 +24,19 @@
 
 
 package edu.umn.genomics.table;
-import java.lang.reflect.*;
-import java.util.*;
+import edu.umn.genomics.component.SaveImage;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.table.*;
-import javax.swing.tree.*;
-import edu.umn.genomics.component.*;
-import edu.umn.genomics.table.cluster.*;
+import javax.swing.table.TableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeModel;
 
 /*
   All returned values are interfaces so that they can be implemented as needed.
@@ -69,7 +71,7 @@ public class DefaultTableContext implements TableContext {
       properties.load(cl.getResourceAsStream(path));
       setDefaultViews(properties);
     } catch(Exception ex) {
-      System.err.println(ex);
+      ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -117,8 +119,6 @@ public class DefaultTableContext implements TableContext {
     }
     public synchronized ColumnMap getColumnMap(int columnIndex) {
       ColumnMap cmap = null;
-      if (maps.size() != tm.getColumnCount()) {
-      }
       if (columnIndex < tm.getColumnCount()) {
         if (columnIndex < maps.size()) {
           cmap = (ColumnMap)maps.get(columnIndex);
@@ -259,13 +259,12 @@ System.err.println(" <<<< ColumnMaps " + e.getSource());
               System.loadLibrary(libName);
             }
           } catch (UnsatisfiedLinkError err) {
-            System.err.println("libdepends: " + libName + "\t" +err);
             continue;
           } catch (SecurityException ex) {
-            System.err.println("libdepends: " + libName + "\t" +ex);
+            ExceptionHandler.popupException(""+ex);
             continue;
           } catch (Throwable t) {
-            System.err.println("libdepends: " + libName + "\t" +t);
+            ExceptionHandler.popupException(""+t);
             continue;
           }
         }
@@ -289,9 +288,9 @@ System.err.println(" <<<< ColumnMaps " + e.getSource());
               defaultViewIcons16.put(theClass, new ImageIcon(cl.getResource(icon)));
             }
           } catch (Exception ex) {
-            System.err.println("setDefaultViews " + viewName + " " + className + "\n " + ex);
+            ExceptionHandler.popupException(""+ex);
           } catch (NoClassDefFoundError err) {
-            System.err.println("setDefaultViews " + viewName + " " + className + "\n " + err);
+            ExceptionHandler.popupException(""+err);
           }
         }
       }
@@ -903,8 +902,7 @@ System.err.println(" <<<< ColumnMaps " + e.getSource());
               try {
                 SaveImage.saveImage(comp instanceof TableModelView ? ((TableModelView)comp).getCanvas() : comp);
               } catch (IOException ioex) {
-                JOptionPane.showMessageDialog(comp, ioex.toString(), "Save Image",
-                  JOptionPane.ERROR_MESSAGE);
+                ExceptionHandler.popupException(""+ioex);
               }
             }
           }
@@ -934,8 +932,7 @@ System.err.println(" <<<< ColumnMaps " + e.getSource());
                  Class.forName("edu.umn.genomics.component.SavePDF").
                     getMethod("savePDF",paramClass).invoke(null,args);
                 } catch (Exception ex) {
-                  JOptionPane.showMessageDialog(comp, comp.getClass() + "\n" + ex.toString(), "Save PDF",
-                    JOptionPane.ERROR_MESSAGE);
+                  ExceptionHandler.popupException(""+ex);
                 }
               }
             }

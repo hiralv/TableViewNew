@@ -21,17 +21,17 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.io.*;
-import java.net.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
+import javax.swing.table.TableModel;
 
 /**
  * A Graphical User Interface for selecting a table from a file or URL, 
@@ -43,10 +43,12 @@ import javax.swing.event.*;
  * @see  javax.swing.ListSelectionModel
  */
 public class FileBrowser extends AbstractTableSource implements OpenTableSource {
+
   TableModel tm = null;
   JFileChooser fc;
   JTextField path;
   JTable jtable = new JTable();
+
   /**
    * Creates a FileBrowser Component for selecting a table from a file or URL.
    */
@@ -69,6 +71,7 @@ public class FileBrowser extends AbstractTableSource implements OpenTableSource 
             try {
               openTableSource();
             } catch (Exception ex) {
+                            ExceptionHandler.popupException(""+ex);
             }
         }
       });
@@ -84,6 +87,7 @@ public class FileBrowser extends AbstractTableSource implements OpenTableSource 
               path.setText(file.getAbsolutePath());
               openTableSource();
             } catch (Exception ex) {
+                                ExceptionHandler.popupException(""+ex);
             }
           } else {
                 System.err.println("Open command cancelled by user.");
@@ -157,11 +161,7 @@ public class FileBrowser extends AbstractTableSource implements OpenTableSource 
     try {
       openTableSource(path.getText());
     } catch (Exception ex) {
-      System.err.println(" openTableSource " + ex);
-      JOptionPane.showMessageDialog((Window)getTopLevelAncestor(),
-                                     ex,
-                                     "Unable to open table",
-                                     JOptionPane.ERROR_MESSAGE);
+            ExceptionHandler.popupException("Invalid URL: "+ex);
     }
   }
 

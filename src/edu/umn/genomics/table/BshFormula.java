@@ -21,15 +21,11 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
-import java.util.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
 import bsh.Interpreter;
+import java.util.List;
+import javax.swing.table.TableModel;
 
 /**
  * BshFormula provides beanshell formulas from tables.
@@ -103,7 +99,7 @@ public class BshFormula extends AbstractColumnFormula {
         try {
           interp.eval("import " + list.get(i) + ".*;");
         } catch (Exception ex) {
-          ex.printStackTrace();
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     }
@@ -113,7 +109,7 @@ public class BshFormula extends AbstractColumnFormula {
         try {
           interp.eval("import " + list.get(i) + ";");
         } catch (Exception ex) {
-          ex.printStackTrace();
+                    ExceptionHandler.popupException(""+ex);
         }
       }
     }
@@ -129,9 +125,7 @@ public class BshFormula extends AbstractColumnFormula {
         result = interp.eval(script);
     } catch (Exception ex) {
       result = ex;
-      // System.err.println("BshFormula " + ex.getClass() + " " + ex);
-      ex.printStackTrace();
-    } finally {
+            ExceptionHandler.popupException(""+ex);
     }
     return result;
   }
@@ -184,5 +178,4 @@ public class BshFormula extends AbstractColumnFormula {
   public String getType() {
     return "BeanShell";
   }
-
 }

@@ -3,9 +3,12 @@ Copied from:
 http://java.sun.com/docs/books/tutorial/uiswing/layout/example-1dot4/SpringUtilities.java
 */
 package edu.umn.genomics.layout;
-import javax.swing.*;
+
+import edu.umn.genomics.table.ExceptionHandler;
+import java.awt.Component;
+import java.awt.Container;
+import javax.swing.Spring;
 import javax.swing.SpringLayout;
-import java.awt.*;
 
 /**
  * A 1.4 file that provides utility methods for
@@ -46,7 +49,7 @@ public class SpringUtilities {
         try {
             layout = (SpringLayout)parent.getLayout();
         } catch (ClassCastException exc) {
-            System.err.println("The first argument to makeGrid must use SpringLayout.");
+            ExceptionHandler.popupException(""+exc);
             return;
         }
 
@@ -149,7 +152,7 @@ public class SpringUtilities {
         try {
             layout = (SpringLayout)parent.getLayout();
         } catch (ClassCastException exc) {
-            System.err.println("The first argument to makeCompactGrid must use SpringLayout.");
+            ExceptionHandler.popupException(""+exc);
             return;
         }
 
@@ -195,4 +198,3 @@ public class SpringUtilities {
         pCons.setConstraint(SpringLayout.EAST, x);
     }
 }
-

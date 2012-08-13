@@ -21,14 +21,13 @@
  * GNU General Public License for more details.
  *
  */
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.*;
+import javax.swing.table.TableModel;
 
 /**
  * BinModel.
@@ -228,8 +227,7 @@ public class DefaultHistogramModel extends AbstractHistogramModel implements Run
           }
         }
       } catch (Exception ex) {
-        System.err.println("Exception calculating bin for item " + r + "  " + arrayString(idx) + " in " + arrayString(dims));
-        ex.printStackTrace();
+                ExceptionHandler.popupException(""+ex);
         return false;
       }
     }
@@ -297,8 +295,6 @@ public class DefaultHistogramModel extends AbstractHistogramModel implements Run
     }
     return selCounts != null ? selCounts.getValues() : new int[0];
   }
-
-  
 
   /** 
    * return The indices of the bin for the item with the given index. 
@@ -382,6 +378,7 @@ public class DefaultHistogramModel extends AbstractHistogramModel implements Run
           }
         }
       } catch (Exception ex) {
+                ExceptionHandler.popupException(""+ex);
       }
     }
     selCounts = null;

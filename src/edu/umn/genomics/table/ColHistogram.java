@@ -148,11 +148,13 @@ public class ColHistogram extends AbstractTableModelView
     while (mapQueue != null && mapQueue.size() > 0) {
       try {
         for (Iterator i = mapQueue.iterator(); i.hasNext();) {
-          ColumnMap cmap = (ColumnMap)i.next();
-          if (updateMap(cmap))
+                    ColumnMap cmap = (ColumnMap) i.next();
+                    if (updateMap(cmap)) {
             i.remove();
         }
+                }
       } catch (ConcurrentModificationException ex) {
+                ExceptionHandler.popupException(""+ex);
       }
       if (mapQueue.size() > 0) {
         Thread.yield();

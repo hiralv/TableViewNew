@@ -21,18 +21,11 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
-import java.util.*;
-import java.text.DecimalFormat;
-import java.text.ParsePosition;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
 import edu.umn.genomics.graph.LineFormula;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.TableModel;
 
 /**
  * CellMap maps the values of a Collection of values to a numeric range. 

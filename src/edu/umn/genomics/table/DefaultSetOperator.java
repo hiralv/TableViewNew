@@ -21,22 +21,23 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
-import java.util.Vector;
-import java.util.Enumeration;
 import java.awt.event.InputEvent;
-import javax.swing.event.*;
-
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Vector;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
 
 /**
  * Maintains the state of the SetOperator.  
- * @author       J Johnson
- * @version $Revision: 1.2 $ $Date: 2002/07/30 19:45:02 $  $Name: TableView1_3 $ 
- * @since        1.0
+ *
+ * @author J Johnson
+ * @version $Revision: 1.2 $ $Date: 2002/07/30 19:45:02 $ $Name: TableView1_3_2
+ * $
+ * @since 1.0
  */
 public class DefaultSetOperator implements Serializable, SetOperator {
   int setOperator = SetOperator.REPLACE;
@@ -134,7 +135,8 @@ public class DefaultSetOperator implements Serializable, SetOperator {
   public void setInputEventMasks(int setOperator, int masks[]) {
     try {
       this.masks.setElementAt(masks, setOperator); 
-    } catch(ArrayIndexOutOfBoundsException ae) {
+        } catch (ArrayIndexOutOfBoundsException ae) {
+            ExceptionHandler.popupException(""+ae);
     }
   }
   public int[] getInputEventMasks(int setOperator) {

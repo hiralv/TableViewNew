@@ -21,13 +21,11 @@
  * GNU General Public License for more details.
  *
  */
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.event.*;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.EventListenerList;
 
 /**

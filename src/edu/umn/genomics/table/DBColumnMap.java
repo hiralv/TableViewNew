@@ -21,27 +21,24 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.util.*;
-import java.lang.ref.*;
-import java.lang.reflect.*;
+import java.io.BufferedReader;
+import java.io.Reader;
+import java.io.IOException;
 import java.sql.*;
-import java.io.*;
-import javax.swing.table.TableModel;
+import java.util.BitSet;
+import java.util.Vector;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
+import javax.swing.table.TableModel;
 
 /**
  * Presents a JDBC obtained database table as a TableModel.
- * @author       J Johnson
- * @version $Revision: 1.5 $ $Date: 2004/08/02 20:23:39 $  $Name: TableView1_3 $
- * @since        1.0
+ *
+ * @author J Johnson
+ * @version $Revision: 1.5 $ $Date: 2004/08/02 20:23:39 $ $Name: TableView1_3_2
+ * $
+ * @since 1.0
  */
 public class DBColumnMap extends CacheColumnMap {
   int sqlType;
@@ -402,8 +399,9 @@ public class DBColumnMap extends CacheColumnMap {
             val = sb.toString();
           }
         } catch (NullPointerException npex) {
+            ExceptionHandler.popupException(""+npex);
         } catch (IOException ioex) {
-          System.err.println("setValueAt("+rowIndex+","+colIndex+") " + ioex);
+                    ExceptionHandler.popupException(""+ioex);
         }
         ((int[])data)[rowIndex] = mapObject(val);
       }
@@ -429,8 +427,9 @@ public class DBColumnMap extends CacheColumnMap {
             }
           }
         } catch (NullPointerException npex) {
+            ExceptionHandler.popupException(""+npex);
         } catch (IOException ioex) {
-          System.err.println("setValueAt("+rowIndex+","+colIndex+") " + ioex);
+                    ExceptionHandler.popupException(""+ioex);
         }
         ((int[])data)[rowIndex] = mapObject(val);
       }

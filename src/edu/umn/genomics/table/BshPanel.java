@@ -21,16 +21,16 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.io.*;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
+import java.awt.BorderLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Map;
+import javax.swing.JFrame;
+import javax.swing.ListSelectionModel;
 
 /**
  * 
@@ -72,7 +72,7 @@ public class BshPanel extends ScriptPanel {
       frame.pack();
       frame.setVisible(true);
     } catch (Exception ex) {
-      System.err.println(ex.toString());
+            ExceptionHandler.popupException(""+ex);
     }
   }
 }

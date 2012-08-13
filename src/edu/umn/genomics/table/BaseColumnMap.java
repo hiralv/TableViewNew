@@ -21,19 +21,17 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
 import java.io.Serializable;
-import java.lang.ref.*;
-import java.util.*;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
-import edu.umn.genomics.graph.LineFormula;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.TableModel;
 
 /**
  * BaseColumnMap maps the values of a TableModel column to a numeric range.
@@ -59,14 +57,18 @@ import edu.umn.genomics.graph.LineFormula;
  */
 public class BaseColumnMap extends AbstractColumnMap 
                               implements Serializable {
+
   class Elem {      // class to hold info in colHash
+
     int index = 0;  // ordinal for distinct values in this column
     int count = 0;  // count of rows that have this value
+
     Elem(int index) {
       this.index = index;
     }
+
     public String toString() {
-     return this + "[index="+index+",count="+count+"]";
+            return this + "[index=" + index + ",count=" + count + "]";
     }
   }
   // Non Number or Date Values - Char VarChar
@@ -74,13 +76,13 @@ public class BaseColumnMap extends AbstractColumnMap
   Vector objList = null;    // sequential list of distinct cell value Objects
                             // This should probably be Object[] and String[]
   OneToOneIndexMap sortIndex = null; // alternative sorting for Objects
-
   double dvals[] = null;
   boolean remap = false;
   boolean recalc = true;
 
   /** 
    * Map the rows in the given column of the table to numeric values. 
+     *
    * @param tableModel the table containing the column of values
    * @param column the index of the column in the TableModel
    */
@@ -269,9 +271,7 @@ public class BaseColumnMap extends AbstractColumnMap
             return (double)i;
           }
         } catch (Exception ex) {
-          System.err.println( "err at (" + row + "," + colIndex + ")  of " + tm.getRowCount() + " map " +  obj + " to " + 
-             colH.get(obj) + "  mappingstate: " + getState());
-          ex.printStackTrace();
+                    ExceptionHandler.popupException(""+ex);
           return NULL_VALUE;
         }
       } else {                // a range of numeric values
@@ -283,13 +283,12 @@ public class BaseColumnMap extends AbstractColumnMap
         try {
           return ((Number)tm.getValueAt(row,colIndex)).doubleValue();
         } catch (Throwable ex) {
-          System.err.println("getMapValue ex= " + ex);
+                    ExceptionHandler.popupException(""+ex);
         }
         return NULL_VALUE;
       }
     } catch (Throwable t) {
-      System.err.println("getMapValue t= " + t);
-      t.printStackTrace();
+            ExceptionHandler.popupException(""+t);
     }
     return NULL_VALUE;
   }
@@ -545,5 +544,4 @@ public class BaseColumnMap extends AbstractColumnMap
     tm = null;
     lsm = null;
   }
-
 }

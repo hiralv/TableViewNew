@@ -21,22 +21,22 @@
  * GNU General Public License for more details.
  *
  */
-
 package edu.umn.genomics.table;
 
-import java.util.*;
-import java.sql.*;
-import java.text.*;
-import java.lang.reflect.*;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 
 /**
- * Make queries that page through a results table.  This will use 
- * SQL99 LIMIT and OFFSET syntax when it is available.
- * @author       J Johnson
- * @version $Revision: 1.2 $ $Date: 2004/02/11 15:53:00 $  $Name: TableView1_3 $
- * @since        1.0
+ * Make queries that page through a results table. This will use SQL99 LIMIT and
+ * OFFSET syntax when it is available.
+ *
+ * @author J Johnson
+ * @version $Revision: 1.2 $ $Date: 2004/02/11 15:53:00 $ $Name: TableView1_3_2
+ * $
+ * @since 1.0
  */
 public class DBPage {
+
   /** 
    * Try to modify the given query so that it will provide the row LIMIT and OFFSET.
    * @param dbmd The metadata for the database connection.
@@ -62,7 +62,7 @@ public class DBPage {
       dbname = dbmd.getDatabaseProductName();
     } catch (SQLException sqlexd) {
       for (SQLException ex = sqlexd; ex != null; ex = ex.getNextException()) {
-        System.err.println("getPageQuery: " +  ex);
+                ExceptionHandler.popupException(""+ex);
       }
     }
     try {
@@ -72,16 +72,16 @@ public class DBPage {
         System.err.println("getPageQuery: " +  amerr);
     } catch (SQLException sqlexd) {
       for (SQLException ex = sqlexd; ex != null; ex = ex.getNextException()) {
-        System.err.println("getPageQuery: " +  ex);
+                ExceptionHandler.popupException(""+ex);
       }
     }
     try {
       dbProductVersion = dbmd.getDatabaseProductVersion();
     } catch (AbstractMethodError amerr) {
-        System.err.println("getPageQuery: " +  amerr);
+            ExceptionHandler.popupException(""+amerr);
     } catch (SQLException sqlexd) {
       for (SQLException ex = sqlexd; ex != null; ex = ex.getNextException()) {
-        System.err.println("getPageQuery: " +  ex);
+                ExceptionHandler.popupException(""+ex);
       }
     }
     if (dbname != null && dbname.equalsIgnoreCase("Oracle")) {
@@ -187,7 +187,9 @@ public class DBPage {
     } else {
       sql = null;
     }
-    if (!true) System.err.println("getPageQuery " + sql);
+        if (!true) {
+            System.err.println("getPageQuery " + sql);
+        }
     return sql;
   }
 }

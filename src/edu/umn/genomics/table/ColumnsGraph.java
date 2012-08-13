@@ -21,22 +21,20 @@
  * GNU General Public License for more details.
  * 
  */
-
-
 package edu.umn.genomics.table;
 
-import java.io.Serializable;
+import edu.umn.genomics.graph.*;
+import edu.umn.genomics.graph.swing.AxisDisplay;
+import edu.umn.genomics.graph.swing.GraphDisplay;
+import edu.umn.genomics.graph.swing.SimpleGraph;
 import java.awt.*;
 import java.awt.event.*;
-import java.text.*;
-import java.util.*;
+import java.io.Serializable;
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
-import edu.umn.genomics.layout.*;
-import edu.umn.genomics.graph.*;
-import edu.umn.genomics.graph.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.TableModel;
 
 /**
  * A ColumnsGraph displays the values of a table 
@@ -200,10 +198,12 @@ public class ColumnsGraph extends AbstractTableModelView
         return o != null ? o.toString() : "";
       }
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     try {
       label = Integer.toString((int)value);
     } catch (Exception ex) {
+            ExceptionHandler.popupException(""+ex);
     }
     return label;
   }

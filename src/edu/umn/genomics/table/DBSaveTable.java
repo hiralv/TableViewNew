@@ -659,6 +659,7 @@ public class DBSaveTable extends JPanel {
         }
       } catch (Exception ex1) {
         conn = null;
+        ExceptionHandler.popupException(""+ex1);
       }
       dbuser = (DBConnectParams)dbChooser.getSelectedItem();
       String usr = dbuser.getUser();
@@ -681,10 +682,7 @@ public class DBSaveTable extends JPanel {
       }
     } catch (Exception ex) {
           status.setText("DB connection failed " + ex);
-          JOptionPane.showMessageDialog(getTopLevelAncestor(),
-                                     ex,
-                                     "Data base connection failed",
-                                     JOptionPane.ERROR_MESSAGE);
+          ExceptionHandler.popupException(""+ex);
     }
     return conn;
   }
@@ -719,11 +717,7 @@ public class DBSaveTable extends JPanel {
       aboutDB.setEnabled(true);
     } catch (Exception ex) {
       status.setText("DB connection failed " + ex);
-      JOptionPane.showMessageDialog(getTopLevelAncestor(),
-                               ex,
-                               "Data base connection failed",
-                               JOptionPane.ERROR_MESSAGE);
-      System.err.println("DB connection failed " + ex);
+      ExceptionHandler.popupException(""+ex);
     }
   }
 
@@ -758,7 +752,7 @@ public class DBSaveTable extends JPanel {
       }
     } catch (SQLException sqlex) {
       for (SQLException ex = sqlex; ex != null; ex = ex.getNextException()) {
-        System.err.println(ex);
+        ExceptionHandler.popupException(""+ex);
       }
     }
     return false;
@@ -803,7 +797,7 @@ public class DBSaveTable extends JPanel {
       maxColumnNameLen = dbmd.getMaxColumnNameLength();
     } catch (SQLException sqlex) {
       for (SQLException ex = sqlex; ex != null; ex = ex.getNextException()) {
-        System.err.println(ex);
+        ExceptionHandler.popupException(""+ex);
       }
     }
 
@@ -813,7 +807,7 @@ public class DBSaveTable extends JPanel {
 
     } catch (SQLException sqlex) {
       for (SQLException ex = sqlex; ex != null; ex = ex.getNextException()) {
-        System.err.println(ex);
+        ExceptionHandler.popupException(""+ex);
       }
     }
 
@@ -845,6 +839,7 @@ public class DBSaveTable extends JPanel {
         try {
           pstmt = conn.prepareStatement(insrt);
         } catch (SQLException sqlex) {
+            ExceptionHandler.popupException(""+sqlex);
         }
 
         int nrow = 0;
@@ -860,7 +855,7 @@ public class DBSaveTable extends JPanel {
             pstmt.execute();
           } catch (SQLException sqlex) {
             for (SQLException ex = sqlex; ex != null; ex = ex.getNextException()) {
-              System.err.println(ex);
+              ExceptionHandler.popupException(""+ex);
             }
           }
         }
@@ -882,7 +877,7 @@ public class DBSaveTable extends JPanel {
     try {
     sfld = field.toString();
     } catch (Exception ex1) {
-      System.err.print("setField exception HERE " + (c+1) + "\t" + ex1);
+      ExceptionHandler.popupException(""+ex1);
     }
     switch (sqltype) {
     case java.sql.Types.CHAR :
@@ -930,19 +925,18 @@ public class DBSaveTable extends JPanel {
           pstmt.setBigDecimal(c+1,new BigDecimal(((Number)field).doubleValue()));
           break;
         } catch (NumberFormatException  numex) {
-           System.err.println("setField  numex " + numex);  
+           ExceptionHandler.popupException(""+ numex);  
         } catch (SQLException sqlex) {
-           System.err.println("setField  sqlex " + sqlex);  
+           ExceptionHandler.popupException(""+ sqlex);
         } catch (Exception ex) {
-           System.err.println("setField  ex " + ex);  
+           ExceptionHandler.popupException(""+ ex);  
         }
       }
       try {
         BigDecimal bd = new BigDecimal(sfld);
         pstmt.setBigDecimal(c+1,bd);
       } catch (StringIndexOutOfBoundsException ioob) {
-        //System.err.println("ioob " + ioob);
-        if (sfld.length() < 1) 
+          if (sfld.length() < 1) 
           pstmt.setNull(c+1,sqltype);
       } catch (SQLException numex) {
         if (numex.toString().indexOf("Underflow") >= 0) {
@@ -994,6 +988,7 @@ public class DBSaveTable extends JPanel {
        System.err.println(" NEED TO DEFINE " + sqltype + " for column " + (c+1));
     }
    } catch (Exception ex) {
+    ExceptionHandler.popupException(""+ex);
     System.err.println("setField " + (c+1) + " : " + ex);
     System.err.println("\t" + sfld);
     System.err.println("\t" + field);
@@ -1421,7 +1416,7 @@ public class DBSaveTable extends JPanel {
         return "VARCHAR(32)";
       }
     } catch (Exception ex) {
-      System.err.println("getSqlTypeFor " + ex);
+      ExceptionHandler.popupException(""+ ex);
     }
     return null;
   }
@@ -1442,6 +1437,7 @@ public class DBSaveTable extends JPanel {
             try {
               ((Window)((JComponent)e.getSource()).getTopLevelAncestor()).dispose();
             } catch (Exception ex) {
+                ExceptionHandler.popupException(""+ ex);
             }
           }
         }
@@ -1464,7 +1460,7 @@ public class DBSaveTable extends JPanel {
           try {
             DBUserList.getSharedInstance().importDBUsers(source);
           } catch (Exception ex) {
-            System.err.println("Unable to set preferences from " + source + "  " + ex);
+            ExceptionHandler.popupException(""+ ex);
           }
         } else if (args[i].equals("-dbname")) {
           dbname = args[++i];
@@ -1506,6 +1502,7 @@ public class DBSaveTable extends JPanel {
           try {
             ((Window)((JComponent)e.getSource()).getTopLevelAncestor()).dispose();
           } catch (Exception ex) {
+              ExceptionHandler.popupException(""+ ex);
           }
         }
       }
