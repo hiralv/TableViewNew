@@ -34,6 +34,7 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Locale;
+import edu.umn.genomics.table.ExceptionHandler;
 
 /**
  * @author       J Johnson
@@ -60,6 +61,7 @@ public class NumberField extends JTextField implements Serializable {
         } catch (ParseException e) {
             // This should never happen because insertString allows
             // only properly formatted data to get in the field.
+            ExceptionHandler.popupException(""+e);
             toolkit.beep();
         }
         return retVal;
