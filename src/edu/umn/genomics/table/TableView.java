@@ -27,6 +27,7 @@ import edu.umn.genomics.bi.dbutil.DBAccountListModel;
 import edu.umn.genomics.bi.dbutil.DBConnectParams;
 import edu.umn.genomics.bi.dbutil.DBUser;
 import edu.umn.genomics.file.OpenInputSource;
+import edu.umn.genomics.server.TableViewServer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -1991,6 +1992,7 @@ public final class TableView extends JPanel implements Serializable //, Printabl
     JFrame frame = new JFrame("TableView");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     TableView tv = new TableView();
+    TableViewServer.startServerSocket(tv);
     for (int i = 0; i < args.length; i++) {
       if (args[i].startsWith("-")) {
         if (args[i].equals("-help")) {
